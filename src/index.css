@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .menu-item {
+        @apply flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800 hover:bg-gray-200 rounded-[5px];
+    }
+
+    .submenu-item {
+        @apply flex flex-row items-center w-[90%] h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-[5px];
+    }
+
+    .inactive {
+        @apply flex flex-row items-center h-12 text-gray-500 hover:text-gray-800;
+    }
+
+    .minimized-zoom {
+        transition: transform 0.3s ease;
+    }
+
+    .minimized-zoom:hover {
+        transform: scale(1.2);
+    }
+
+    .add-design{
+        @apply flex px-3 py-3 gap-2 border-r text-center justify-center border-gray-200 bg-gray-100 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-300
+    }
+
+    .clmn{
+        @apply px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-300
+    }
+}
