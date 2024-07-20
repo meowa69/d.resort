@@ -5,8 +5,14 @@ import 'react-datepicker/dist/react-datepicker.css';
 function Employee() {
     const navigate = useNavigate();
     const [open, setOpen] = useState(true);
-    const [activeMenu, setActiveMenu] = useState("dashboard"); 
-    const [bookingsOpen, setBookingsOpen] = useState(false); 
+    const [activeMenu, setActiveMenu] = useState("dashboard");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [newProduct, setNewProduct] = useState({ name: '', quantity: '', avgPrice: '', amount: '' });
+    const [editProductId, setEditProductId] = useState(null);
+    const [editedProduct, setEditedProduct] = useState({});
+    const [bookingsOpen, setBookingsOpen] = useState(false);
+
     const sidebarRef = useRef(null);
     const submenuRef = useRef(null);
 
@@ -24,24 +30,23 @@ function Employee() {
         } else {
             setActiveMenu("dashboard");
         }
+
         const handleClickOutside = (event) => {
             if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
                 if (submenuRef.current && !submenuRef.current.contains(event.target)) {
-                    setBookingsOpen(false); 
+                    setBookingsOpen(false);
                 }
             }
         };
-    
+
         document.addEventListener('click', handleClickOutside);
-    
+
         return () => {
             document.removeEventListener('click', handleClickOutside);
         };
-
     }, []);
 
     useEffect(() => {
-        // Save active menu to localStorage whenever it changes
         localStorage.setItem("activeMenu", activeMenu);
     }, [activeMenu]);
 
@@ -66,6 +71,46 @@ function Employee() {
         navigate('/admin');
     };
 
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setNewProduct({ name: '', quantity: '', avgPrice: '', amount: '' });
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewProduct(prevState => ({ ...prevState, [name]: value }));
+    };
+
+    const handleAddProduct = (e) => {
+        e.preventDefault();
+        setProducts([...products, { ...newProduct, id: products.length + 1 }]);
+        closeModal();
+    };
+
+    const handleDeleteProduct = (id) => {
+        setProducts(products.filter(product => product.id !== id));
+    };
+
+    const handleEditClick = (product) => {
+        setEditProductId(product.id);
+        setEditedProduct({ ...product });
+    };
+
+    const handleEditChange = (e) => {
+        const { name, value } = e.target;
+        setEditedProduct(prevState => ({ ...prevState, [name]: value }));
+    };
+
+    const handleSaveClick = () => {
+        setProducts(products.map(product =>
+            product.id === editProductId ? editedProduct : product
+        ));
+        setEditProductId(null);
+    };
     return (
         <div className="min-h-screen flex flex-row bg-white">
             <div ref={sidebarRef} className={`${open ? "w-[330px]" : "w-[110px]"} duration-300 h-screen bg-white relative shadow-lg`}>
@@ -106,7 +151,7 @@ function Employee() {
                                     <span className={`text-md font-medium ml-2 ${!open && "hidden"}`}>{menu.title}</span>
                                 </a>
                                 {menu.submenus && bookingsOpen && (
-                                    <ul ref={submenuRef} className={`ml-5 transition-all duration-300 ${open ? 'relative' : 'absolute left-[110px] top-[230px]'} bg-gray-100 rounded-lg w-[250px]`}>
+                                    <ul ref={submenuRef} className={`ml-5 transition-all duration-300 ${open ? 'relative' : 'absolute left-[110px] top-[230px]'} bg-gray-100 rounded-lg w-[250px] z-10`}>
                                         {menu.submenus.map((submenu, subIndex) => (
                                             <li key={subIndex}>
                                                 <a
@@ -175,8 +220,12 @@ function Employee() {
                     <h1 className="text-4xl font-bold mb-4">PRODUCT</h1>
                     <div className="bg-white p-8 rounded-md w-full border-2 border-gray-400 mt-[50px]">
                         <div className="lg:ml-30 mb-5 space-x-8">
-                                <button className="flex items-center gap-1 bg-[#70b8d3] hover:bg-[#09B0EF] px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">
-                                <i><img src="./src/assets/plus.png" className="fill-current w-4 h-4" style={{ filter: 'invert(100%)' }} /></i>Add Product</button>
+                            <button 
+                                className="flex items-center gap-1 bg-[#70b8d3] hover:bg-[#09B0EF] px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer"
+                                onClick={openModal}
+                            >
+                                <i><img src="./src/assets/plus.png" className="fill-current w-4 h-4" style={{ filter: 'invert(100%)' }} /></i>Add Product
+                            </button>
                         </div>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2 text-xs xs:text-sm text-gray-900">
@@ -206,45 +255,114 @@ function Employee() {
 
                         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                             <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-                                <table className="min-w-full leading-normal">
-                                    <thead>
-                                        <tr>
-                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Product</th>
-                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantity</th>
-                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">AVG Price</th>
-                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Amount</th>
-                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
-                                        </tr>
-                                    </thead>
-                                    
-                                    <tbody>
-                                        <tr>
-                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                                <p className="text-gray-900 whitespace-no-wrap">Shampoo</p>
-                                            </td>
-                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                                <p className="text-gray-900 whitespace-no-wrap">10</p>
-                                            </td>
-                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                                <p className="text-gray-900 whitespace-no-wrap">8</p>
-                                            </td>
-                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                                <p className="text-gray-900 whitespace-no-wrap">80</p>
-                                            </td>
-                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                                <div className="flex space-x-2">
-                                                    <button className="px-4 py-3 text-base font-medium rounded-md shadow-md text-white bg-[#70b8d3] hover:bg-[#09B0EF]">
-                                                        <img src="./src/assets/edit.png" className="fill-current w-4 h-4" style={{ filter: 'invert(100%)' }} />
-                                                    </button>
-                                                    <button className="px-4 py-3 text-base font-medium rounded-md shadow-md text-white bg-[#ED6565] hover:bg-[#F24E4E]">
-                                                        <img src="./src/assets/delete.png" className="fill-current w-4 h-4" style={{ filter: 'invert(100%)' }} />
-                                                    </button>
-                                                </div>
-                                            </td>
-
-                                        </tr>    
-                                    </tbody>
-                                </table>
+                                <table className="min-w-full bg-white">
+                                        <thead>
+                                            <tr>
+                                                <th className="thDesign">ID</th>
+                                                <th className="thDesign">Product Name</th>
+                                                <th className="thDesign">Quantity</th>
+                                                <th className="thDesign">Average Price</th>
+                                                <th className="thDesign">Amount</th>
+                                                <th className="thDesign">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {products.map((product) => (
+                                                <tr key={product.id}>
+                                                    <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">{product.id}</td>
+                                                    <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                        {editProductId === product.id ? (
+                                                            <input
+                                                                type="text"
+                                                                name="name"
+                                                                value={editedProduct.name}
+                                                                onChange={handleEditChange}
+                                                                className="w-full p-2 border border-gray-300 rounded"
+                                                            />
+                                                        ) : (
+                                                            product.name
+                                                        )}
+                                                    </td>
+                                                    <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                        {editProductId === product.id ? (
+                                                            <input
+                                                                type="number"
+                                                                name="quantity"
+                                                                value={editedProduct.quantity}
+                                                                onChange={handleEditChange}
+                                                                className="w-full p-2 border border-gray-300 rounded"
+                                                            />
+                                                        ) : (
+                                                            product.quantity
+                                                        )}
+                                                    </td>
+                                                    <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                        {editProductId === product.id ? (
+                                                            <input
+                                                                type="number"
+                                                                step="0.01"
+                                                                name="avgPrice"
+                                                                value={editedProduct.avgPrice}
+                                                                onChange={handleEditChange}
+                                                                className="w-full p-2 border border-gray-300 rounded"
+                                                            />
+                                                        ) : (
+                                                            product.avgPrice
+                                                        )}
+                                                    </td>
+                                                    <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                        {editProductId === product.id ? (
+                                                            <input
+                                                                type="number"
+                                                                step="0.01"
+                                                                name="amount"
+                                                                value={editedProduct.amount}
+                                                                onChange={handleEditChange}
+                                                                className="w-full p-2 border border-gray-300 rounded"
+                                                            />
+                                                        ) : (
+                                                            product.amount
+                                                        )}
+                                                    </td>
+                                                    <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                        <div className="space-x-2">
+                                                            {editProductId === product.id ? (
+                                                                <button
+                                                                    className="px-3 py-2 text-base font-medium rounded-md shadow-md text-white bg-[#70b8d3] hover:bg-[#09B0EF]"
+                                                                    onClick={handleSaveClick}
+                                                                >
+                                                                    Save
+                                                                </button>
+                                                            ) : (
+                                                                <button
+                                                                    className="px-3 py-2 text-base font-medium rounded-md shadow-md text-white bg-[#70b8d3] hover:bg-[#09B0EF]"
+                                                                    onClick={() => handleEditClick(product)}
+                                                                >
+                                                                    <img
+                                                                        src="./src/assets/edit.png"
+                                                                        className="fill-current w-4 h-4"
+                                                                        style={{ filter: 'invert(100%)' }}
+                                                                        alt="Edit"
+                                                                    />
+                                                                </button>
+                                                            )}
+                                                            <button
+                                                                className="px-3 py-2 text-base font-medium rounded-md shadow-md text-white bg-[#ED6565] hover:bg-[#F24E4E]"
+                                                                onClick={() => handleDeleteProduct(product.id)}
+                                                            >
+                                                                <img
+                                                                    src="./src/assets/delete.png"
+                                                                    className="fill-current w-4 h-4"
+                                                                    style={{ filter: 'invert(100%)' }}
+                                                                    alt="Delete"
+                                                                />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
 
                                 <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-end xs:justify-between">
                                     <div className="inline-flex mt-2 xs:mt-0">
@@ -260,6 +378,75 @@ function Employee() {
                             </div>
                         </div>
                     </div>
+
+                    {isModalOpen && (
+                        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+                            <div className="bg-white p-6 rounded-md w-[1200px]">
+                                <h2 className="text-xl font-semibold mb-4">Add Product</h2>
+                                <form onSubmit={handleAddProduct}>
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-gray-700">Product Name</label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            value={newProduct.name}
+                                            onChange={handleInputChange}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-gray-700">Quantity</label>
+                                        <input
+                                            type="number"
+                                            name="quantity"
+                                            value={newProduct.quantity}
+                                            onChange={handleInputChange}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-gray-700">Average Price</label>
+                                        <input
+                                            type="number"
+                                            name="avgPrice"
+                                            value={newProduct.avgPrice}
+                                            onChange={handleInputChange}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-gray-700">Amount</label>
+                                        <input
+                                            type="number"
+                                            name="amount"
+                                            value={newProduct.amount}
+                                            onChange={handleInputChange}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="flex justify-end">
+                                        <button
+                                            type="button"
+                                            onClick={closeModal}
+                                            className="text-white px-4 py-2 rounded-md mr-2 bg-[#ED6565] hover:bg-[#F24E4E]"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="text-white px-4 py-2 rounded-md bg-[#70b8d3] hover:bg-[#09B0EF]"
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Sales Transaction Section */}

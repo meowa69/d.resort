@@ -456,7 +456,7 @@ function Admin() {
                                     <tbody>
                                         {tableRows.slice(startIndex, endIndex).map((row, rowIndex) => (
                                             <tr key={row.id}>
-                                                {['index', 'name', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'status'].map((col, colIndex) => (
+                                                {['index', 'name', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'action'].map((col, colIndex) => (
                                                     <td
                                                         key={col}
                                                         className={`px-5 py-5 border-b border-r bg-white text-sm cursor-pointer ${clickedCell && clickedCell.rowIndex === rowIndex && clickedCell.colIndex === colIndex ? 'border-blue-500' : ''}`}
@@ -464,7 +464,7 @@ function Admin() {
                                                     >
                                                         {col === 'index' ? (
                                                             <p className="text-center text-gray-900 whitespace-no-wrap">{rowIndex + startIndex + 1}</p>
-                                                        ) : col === 'status' ? (
+                                                        ) : col === 'action' ? (
                                                             <div className="flex justify-center space-x-2">
                                                                 <button className="px-3 py-2 text-base font-medium rounded-md shadow-md text-white bg-[#70b8d3] hover:bg-[#09B0EF]">
                                                                     <img src="./src/assets/edit.png" className="fill-current w-4 h-4" style={{ filter: 'invert(100%)' }} />
