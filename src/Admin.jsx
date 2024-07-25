@@ -57,7 +57,7 @@ function Admin() {
         { title: "Employee List", src: "group" },
         { title: "Attendance", src: "calendar" },
         { title: "Work Schedules", src: "clock" },
-        { title: "Sales Report", src: "report" },
+        { title: "Report", src: "report" },
         { title: "Payroll", src: "money" },
     ];
 

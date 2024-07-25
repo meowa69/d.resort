@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from 'react-datepicker';
 
 function Employee() {
     const navigate = useNavigate();
@@ -12,7 +13,11 @@ function Employee() {
     const [editProductId, setEditProductId] = useState(null);
     const [editedProduct, setEditedProduct] = useState({});
     const [bookingsOpen, setBookingsOpen] = useState(false);
-
+    const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+    const [receiptProducts, setReceiptProducts] = useState([]);
+    const [receiptDate, setReceiptDate] = useState(new Date());
+    const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+    
     const sidebarRef = useRef(null);
     const submenuRef = useRef(null);
 
@@ -20,7 +25,7 @@ function Employee() {
         { title: "Dashboard", src: "dashboard" },
         { title: "Bookings", src: "booking", submenus: [{ title: "Cottage", src: "cottage" }, { title: "Lodge", src: "lodge" }] },
         { title: "Product", src: "product" },
-        { title: "Sales Transaction", src: "report" },
+        { title: "Sales Report", src: "report" },
     ];
 
     useEffect(() => {
@@ -82,17 +87,34 @@ function Employee() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setNewProduct(prevState => ({ ...prevState, [name]: value }));
+        setNewProduct(prevState => {
+            const updatedProduct = { ...prevState, [name]: value };
+            if (name === 'quantity' || name === 'avgPrice') {
+                const quantity = parseFloat(updatedProduct.quantity) || 0;
+                const avgPrice = parseFloat(updatedProduct.avgPrice) || 0;
+                updatedProduct.amount = (quantity * avgPrice).toFixed(2);
+            }
+            return updatedProduct;
+        });
     };
 
     const handleAddProduct = (e) => {
         e.preventDefault();
-        setProducts([...products, { ...newProduct, id: products.length + 1 }]);
+        const maxId = products.reduce((max, product) => Math.max(max, product.id), 0);
+        const newProductWithId = { ...newProduct, id: maxId + 1 };
+        setProducts([...products, newProductWithId]);
         closeModal();
     };
+    
 
     const handleDeleteProduct = (id) => {
-        setProducts(products.filter(product => product.id !== id));
+        const filteredProducts = products.filter(product => product.id !== id);
+        // Re-sequence IDs
+        const reSequencedProducts = filteredProducts.map((product, index) => ({
+            ...product,
+            id: index + 1
+        }));
+        setProducts(reSequencedProducts);
     };
 
     const handleEditClick = (product) => {
@@ -102,7 +124,15 @@ function Employee() {
 
     const handleEditChange = (e) => {
         const { name, value } = e.target;
-        setEditedProduct(prevState => ({ ...prevState, [name]: value }));
+        setEditedProduct(prevState => {
+            const updatedProduct = { ...prevState, [name]: value };
+            if (name === 'quantity' || name === 'avgPrice') {
+                const quantity = parseFloat(updatedProduct.quantity) || 0;
+                const avgPrice = parseFloat(updatedProduct.avgPrice) || 0;
+                updatedProduct.amount = (quantity * avgPrice).toFixed(2);
+            }
+            return updatedProduct;
+        });
     };
 
     const handleSaveClick = () => {
@@ -111,6 +141,27 @@ function Employee() {
         ));
         setEditProductId(null);
     };
+
+    const openReceiptModal = () => {
+        const totalAmount = products.reduce((total, product) => total + (product.quantity * product.avgPrice), 0);
+        setReceiptProducts({ products, totalAmount }); 
+        setIsReceiptModalOpen(true);
+    };
+    
+
+    const closeReceiptModal = () => {
+        setIsReceiptModalOpen(false);
+    };
+
+    const handleDateChange = (date) => {
+        setReceiptDate(date);
+        setIsDatePickerOpen(false);
+    };
+
+    const toggleDatePicker = () => {
+        setIsDatePickerOpen(!isDatePickerOpen);
+    };
+
     return (
         <div className="min-h-screen flex flex-row bg-white">
             <div ref={sidebarRef} className={`${open ? "w-[330px]" : "w-[110px]"} duration-300 h-screen bg-white relative shadow-lg`}>
@@ -220,7 +271,7 @@ function Employee() {
                     <h1 className="text-4xl font-bold mb-4">PRODUCT</h1>
                     <div className="bg-white p-8 rounded-md w-full border-2 border-gray-400 mt-[50px]">
                         <div className="lg:ml-30 mb-5 space-x-8">
-                            <button 
+                            <button
                                 className="flex items-center gap-1 bg-[#70b8d3] hover:bg-[#09B0EF] px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer"
                                 onClick={openModal}
                             >
@@ -247,8 +298,9 @@ function Employee() {
                                     <input className="bg-white outline-none ml-1 block" type="text" placeholder="search..." />
                                 </div>
                                 <div className="lg:ml-30 ml-5 space-x-8">
-                                    <button className="flex items-center gap-1 bg-[#70b8d3] hover:bg-[#09B0EF] px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">
-                                    <i><img src="./src/assets/upload.png" className="fill-current w-4 h-4" style={{ filter: 'invert(100%)' }} /></i>Upload</button>
+                                    <button onClick={openReceiptModal} className="flex items-center gap-1 bg-[#70b8d3] hover:bg-[#09B0EF] px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">
+                                        <i><img src="./src/assets/upload.png" className="fill-current w-4 h-4" style={{ filter: 'invert(100%)' }} /></i>Upload
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -256,113 +308,113 @@ function Employee() {
                         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                             <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
                                 <table className="min-w-full bg-white">
-                                        <thead>
-                                            <tr>
-                                                <th className="thDesign">ID</th>
-                                                <th className="thDesign">Product Name</th>
-                                                <th className="thDesign">Quantity</th>
-                                                <th className="thDesign">Average Price</th>
-                                                <th className="thDesign">Amount</th>
-                                                <th className="thDesign">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {products.map((product) => (
-                                                <tr key={product.id}>
-                                                    <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">{product.id}</td>
-                                                    <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                    <thead>
+                                        <tr>
+                                            <th className="thDesign">ID</th>
+                                            <th className="thDesign">Product Name</th>
+                                            <th className="thDesign">Quantity</th>
+                                            <th className="thDesign">Average Price</th>
+                                            <th className="thDesign">Amount</th>
+                                            <th className="thDesign">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {products.map((product) => (
+                                            <tr key={product.id}>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">{product.id}</td>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                    {editProductId === product.id ? (
+                                                        <input
+                                                            type="text"
+                                                            name="name"
+                                                            value={editedProduct.name}
+                                                            onChange={handleEditChange}
+                                                            className="w-full p-2 border border-gray-300 rounded"
+                                                        />
+                                                    ) : (
+                                                        product.name
+                                                    )}
+                                                </td>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                    {editProductId === product.id ? (
+                                                        <input
+                                                            type="number"
+                                                            name="quantity"
+                                                            value={editedProduct.quantity}
+                                                            onChange={handleEditChange}
+                                                            className="w-full p-2 border border-gray-300 rounded"
+                                                        />
+                                                    ) : (
+                                                        product.quantity
+                                                    )}
+                                                </td>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                    {editProductId === product.id ? (
+                                                        <input
+                                                            type="number"
+                                                            step="0.01"
+                                                            name="avgPrice"
+                                                            value={editedProduct.avgPrice}
+                                                            onChange={handleEditChange}
+                                                            className="w-full p-2 border border-gray-300 rounded"
+                                                        />
+                                                    ) : (
+                                                        product.avgPrice
+                                                    )}
+                                                </td>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                    {editProductId === product.id ? (
+                                                        <input
+                                                            type="number"
+                                                            step="0.01"
+                                                            name="amount"
+                                                            value={editedProduct.amount}
+                                                            readOnly
+                                                            className="w-full p-2 border border-gray-300 rounded"
+                                                        />
+                                                    ) : (
+                                                        product.amount
+                                                    )}
+                                                </td>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                    <div className="space-x-2">
                                                         {editProductId === product.id ? (
-                                                            <input
-                                                                type="text"
-                                                                name="name"
-                                                                value={editedProduct.name}
-                                                                onChange={handleEditChange}
-                                                                className="w-full p-2 border border-gray-300 rounded"
-                                                            />
-                                                        ) : (
-                                                            product.name
-                                                        )}
-                                                    </td>
-                                                    <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                                        {editProductId === product.id ? (
-                                                            <input
-                                                                type="number"
-                                                                name="quantity"
-                                                                value={editedProduct.quantity}
-                                                                onChange={handleEditChange}
-                                                                className="w-full p-2 border border-gray-300 rounded"
-                                                            />
-                                                        ) : (
-                                                            product.quantity
-                                                        )}
-                                                    </td>
-                                                    <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                                        {editProductId === product.id ? (
-                                                            <input
-                                                                type="number"
-                                                                step="0.01"
-                                                                name="avgPrice"
-                                                                value={editedProduct.avgPrice}
-                                                                onChange={handleEditChange}
-                                                                className="w-full p-2 border border-gray-300 rounded"
-                                                            />
-                                                        ) : (
-                                                            product.avgPrice
-                                                        )}
-                                                    </td>
-                                                    <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                                        {editProductId === product.id ? (
-                                                            <input
-                                                                type="number"
-                                                                step="0.01"
-                                                                name="amount"
-                                                                value={editedProduct.amount}
-                                                                onChange={handleEditChange}
-                                                                className="w-full p-2 border border-gray-300 rounded"
-                                                            />
-                                                        ) : (
-                                                            product.amount
-                                                        )}
-                                                    </td>
-                                                    <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                                        <div className="space-x-2">
-                                                            {editProductId === product.id ? (
-                                                                <button
-                                                                    className="px-3 py-2 text-base font-medium rounded-md shadow-md text-white bg-[#70b8d3] hover:bg-[#09B0EF]"
-                                                                    onClick={handleSaveClick}
-                                                                >
-                                                                    Save
-                                                                </button>
-                                                            ) : (
-                                                                <button
-                                                                    className="px-3 py-2 text-base font-medium rounded-md shadow-md text-white bg-[#70b8d3] hover:bg-[#09B0EF]"
-                                                                    onClick={() => handleEditClick(product)}
-                                                                >
-                                                                    <img
-                                                                        src="./src/assets/edit.png"
-                                                                        className="fill-current w-4 h-4"
-                                                                        style={{ filter: 'invert(100%)' }}
-                                                                        alt="Edit"
-                                                                    />
-                                                                </button>
-                                                            )}
                                                             <button
-                                                                className="px-3 py-2 text-base font-medium rounded-md shadow-md text-white bg-[#ED6565] hover:bg-[#F24E4E]"
-                                                                onClick={() => handleDeleteProduct(product.id)}
+                                                                className="px-3 py-2 text-base font-medium rounded-md shadow-md text-white bg-[#70b8d3] hover:bg-[#09B0EF]"
+                                                                onClick={handleSaveClick}
+                                                            >
+                                                                Save
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                className="px-3 py-2 text-base font-medium rounded-md shadow-md text-white bg-[#70b8d3] hover:bg-[#09B0EF]"
+                                                                onClick={() => handleEditClick(product)}
                                                             >
                                                                 <img
-                                                                    src="./src/assets/delete.png"
+                                                                    src="./src/assets/edit.png"
                                                                     className="fill-current w-4 h-4"
                                                                     style={{ filter: 'invert(100%)' }}
-                                                                    alt="Delete"
+                                                                    alt="Edit"
                                                                 />
                                                             </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                                                        )}
+                                                        <button
+                                                            className="px-3 py-2 text-base font-medium rounded-md shadow-md text-white bg-[#ED6565] hover:bg-[#F24E4E]"
+                                                            onClick={() => handleDeleteProduct(product.id)}
+                                                        >
+                                                            <img
+                                                                src="./src/assets/delete.png"
+                                                                className="fill-current w-4 h-4"
+                                                                style={{ filter: 'invert(100%)' }}
+                                                                alt="Delete"
+                                                            />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
 
                                 <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-end xs:justify-between">
                                     <div className="inline-flex mt-2 xs:mt-0">
@@ -417,17 +469,6 @@ function Employee() {
                                             required
                                         />
                                     </div>
-                                    <div className="mb-4">
-                                        <label className="block text-sm font-medium text-gray-700">Amount</label>
-                                        <input
-                                            type="number"
-                                            name="amount"
-                                            value={newProduct.amount}
-                                            onChange={handleInputChange}
-                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                            required
-                                        />
-                                    </div>
                                     <div className="flex justify-end">
                                         <button
                                             type="button"
@@ -447,11 +488,74 @@ function Employee() {
                             </div>
                         </div>
                     )}
+
+                    {isReceiptModalOpen && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50">
+                            <div className="w-[800px] bg-white p-6 rounded-lg shadow-lg ">
+                                <h2 className="text-xl font-bold mb-4">Report</h2>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700">Date</label>
+                                    <div className="absolute">
+                                        <button
+                                            type="button"
+                                            onClick={toggleDatePicker}
+                                            className="flex items-center space-x-2 border border-gray-300 rounded-md p-2"
+                                        >
+                                            <img src="./src/assets/calendar.png" alt="Select Date" className="w-5 h-5"/>
+                                            <span>{receiptDate.toLocaleDateString()}</span>
+                                        </button>
+                                        {isDatePickerOpen && (
+                                            <DatePicker
+                                                selected={receiptDate}
+                                                onChange={handleDateChange}
+                                                dateFormat="MMMM d, yyyy"
+                                                className=" mt-2 border border-gray-300 rounded-md shadow-sm"
+                                                inline
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                                        
+                                <table className="w-full border-collapse border border-gray-200 shadow rounded-lg mt-[50px]">
+                                    <thead className="bg-gray-100">
+                                        <tr>
+                                            <th className="thDesign">Product Name</th>
+                                            <th className="thDesign">Quantity</th>
+                                            <th className="thDesign">Average Price</th>
+                                            <th className="thDesign">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {receiptProducts.products.map((product) => (
+                                            <tr key={product.id}>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">{product.name}</td>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">{product.quantity}</td>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">{product.avgPrice}</td>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">{(product.quantity * product.avgPrice).toFixed(2)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colSpan="3" className="border border-gray-300 p-2 text-right font-bold">Total</td>
+                                            <td className="border border-gray-300 p-2 text-right font-bold">{receiptProducts.totalAmount.toFixed(2)}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                <div className="flex justify-end py-2">
+                                    <button onClick={closeReceiptModal} className="text-white px-4 py-2 rounded-md mr-2 bg-[#ED6565] hover:bg-[#F24E4E]">Cancel</button>
+                                    <button className="text-white px-4 py-2 rounded-md bg-[#70b8d3] hover:bg-[#09B0EF]">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                {/* Sales Transaction Section */}
+                
+
+                {/* Sales Section */}
                 <div id="report" className={`menu-content ${activeMenu === "report" ? "block" : "hidden"}`}>
-                    <h1 className="text-4xl font-bold mb-4">SALES TRANSACTION</h1>
+                    <h1 className="text-4xl font-bold mb-4">SALES REPORT</h1>
                     <div className="bg-white p-8 rounded-md w-full border-2 border-gray-400 mt-[50px]"></div>
                 </div>
             </div>
