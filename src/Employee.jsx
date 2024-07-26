@@ -17,7 +17,10 @@ function Employee() {
     const [receiptProducts, setReceiptProducts] = useState([]);
     const [receiptDate, setReceiptDate] = useState(new Date());
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-    
+    const [salesReportData, setSalesReportData] = useState([]);
+    const [expandedReports, setExpandedReports] = useState(salesReportData.map(() => false));
+    const [optionMenuVisible, setOptionMenuVisible] = useState(Array(salesReportData.length).fill(false));
+
     const sidebarRef = useRef(null);
     const submenuRef = useRef(null);
 
@@ -109,7 +112,6 @@ function Employee() {
 
     const handleDeleteProduct = (id) => {
         const filteredProducts = products.filter(product => product.id !== id);
-        // Re-sequence IDs
         const reSequencedProducts = filteredProducts.map((product, index) => ({
             ...product,
             id: index + 1
@@ -161,6 +163,40 @@ function Employee() {
     const toggleDatePicker = () => {
         setIsDatePickerOpen(!isDatePickerOpen);
     };
+
+    const handleConfirm = () => {
+        const newSalesData = {
+            date: receiptDate.toLocaleDateString(),
+            products: receiptProducts.products.map(product => ({
+                id: product.id,
+                name: product.name,
+                quantity: product.quantity,
+                avgPrice: product.avgPrice,
+                amount: (product.quantity * product.avgPrice).toFixed(2),
+            })),
+            totalAmount: receiptProducts.totalAmount.toFixed(2)
+        };
+    
+        setSalesReportData([...salesReportData, newSalesData]);
+        closeReceiptModal();
+    };
+
+    const toggleReportVisibility = (index) => {
+        setExpandedReports(prevState => {
+            const newExpandedReports = [...prevState];
+            newExpandedReports[index] = !newExpandedReports[index];
+            return newExpandedReports;
+        });
+    };
+
+    const toggleOptionMenu = (index) => {
+        setOptionMenuVisible(prevState => {
+            const newOptionMenuVisible = [...prevState];
+            newOptionMenuVisible[index] = !newOptionMenuVisible[index];
+            return newOptionMenuVisible;
+        });
+    };
+    
 
     return (
         <div className="min-h-screen flex flex-row bg-white">
@@ -433,7 +469,7 @@ function Employee() {
 
                     {isModalOpen && (
                         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-                            <div className="bg-white p-6 rounded-md w-[1200px]">
+                            <div className="bg-white p-6 rounded-md w-[900px] ">
                                 <h2 className="text-xl font-semibold mb-4">Add Product</h2>
                                 <form onSubmit={handleAddProduct}>
                                     <div className="mb-4">
@@ -544,19 +580,96 @@ function Employee() {
                                 </table>
                                 <div className="flex justify-end py-2">
                                     <button onClick={closeReceiptModal} className="text-white px-4 py-2 rounded-md mr-2 bg-[#ED6565] hover:bg-[#F24E4E]">Cancel</button>
-                                    <button className="text-white px-4 py-2 rounded-md bg-[#70b8d3] hover:bg-[#09B0EF]">Confirm</button>
+                                    <button onClick={handleConfirm} className="text-white px-4 py-2 rounded-md bg-[#70b8d3] hover:bg-[#09B0EF]">Confirm</button>
                                 </div>
                             </div>
                         </div>
                     )}
                 </div>
 
-                
-
                 {/* Sales Section */}
                 <div id="report" className={`menu-content ${activeMenu === "report" ? "block" : "hidden"}`}>
                     <h1 className="text-4xl font-bold mb-4">SALES REPORT</h1>
-                    <div className="bg-white p-8 rounded-md w-full border-2 border-gray-400 mt-[50px]"></div>
+                    <div className="bg-white p-8 rounded-md w-full border-2 border-gray-400 mt-[50px]">
+                        {salesReportData.length === 0 ? (
+                            <div className="text-center p-6 text-gray-500">
+                                <h2 className="text-xl font-semibold">NO REPORT</h2>
+                            </div>
+                        ) : (
+                            salesReportData.map((report, index) => (
+                                <div key={index} className="mb-4 border-gray-300 border-2 p-5 rounded-lg">
+                                    <div className="flex items-center w-full justify-between">
+                                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => toggleReportVisibility(index)}>
+                                            <img src="./src/assets/down.png" className="fill-current w-5 h-5" />
+                                            <h2 className="text-[20px] font-semibold">Report for {report.date}</h2>
+                                        </div>
+                                        <div className="relative flex">
+                                            <img src="./src/assets/option.png" className="fill-current w-5 h-5 cursor-pointer" onClick={() => toggleOptionMenu(index)} />
+                                            {optionMenuVisible[index] && (
+                                                <div className="absolute right-6 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-sm">
+                                                    <ul className="p-3">
+                                                        <li className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                                            <img src="./src/assets/printer.png" className="w-4 h-4 mr-2" alt="Print" />
+                                                            Print
+                                                        </li>
+                                                        <li className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                                            <img src="./src/assets/download.png" className="w-4 h-4 mr-2" alt="Download" />
+                                                            Download
+                                                        </li>
+                                                        <li className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                                            <img src="./src/assets/excel.png" className="w-4 h-4 mr-2" alt="Excel" />
+                                                            Excel
+                                                        </li>
+                                                        <li className="flex items-center px-4 py-2 border-t-2 hover:bg-gray-100 cursor-pointer">
+                                                            <img src="./src/assets/delete.png" className="w-4 h-4 mr-2" alt="Delete" />
+                                                            Delete
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {expandedReports[index] && (
+                                        <div className="border-2 p-5 rounded-md mt-2">
+                                            <div className="flex justify-center items-center mb-2 gap-2">
+                                                <div className="inline">
+                                                    <h2 className="text-[18px] font-bold">SALES BY PRODUCT</h2>
+                                                    <h3 className="text-center mt-2 mb-2">{report.date}</h3>
+                                                </div>
+                                            </div>
+                                            <table className="w-full border-collapse border border-gray-200 rounded-sm">
+                                                <thead className="bg-gray-100">
+                                                    <tr>
+                                                        <th className="thDesign">Product Name</th>
+                                                        <th className="thDesign">Quantity</th>
+                                                        <th className="thDesign">Average Price</th>
+                                                        <th className="thDesign">Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {report.products.map((product) => (
+                                                        <tr key={product.id}>
+                                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">{product.name}</td>
+                                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">{product.quantity}</td>
+                                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">{product.avgPrice}</td>
+                                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">{product.amount}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colSpan="3" className="border border-gray-200 p-2 text-right font-bold">Total</td>
+                                                        <td className="border border-gray-200 p-2 text-right font-bold">{report.totalAmount}</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    )}
+                                </div>
+                            ))
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
