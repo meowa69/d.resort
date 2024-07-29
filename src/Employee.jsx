@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
@@ -215,7 +215,7 @@ function Employee() {
                         alt="Logo"
                     />
                     <h1 className={`text-white origin-left font-medium text-xl duration-300 ${!open && "scale-0"}`}>
-                        YASAY'S BEACH RESORT
+                        YASAY BEACH RESORT
                     </h1>
                 </div>
 

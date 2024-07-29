@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -115,9 +115,7 @@ function Admin() {
                         className={`cursor-pointer duration-500 w-20 ${!open && "rotate-[360deg]"}`}
                         alt="Logo"
                     />
-                    <h1 className={`text-white origin-left font-medium text-xl duration-300 ${!open && "scale-0"}`}>
-                        YASAY'S BEACH RESORT
-                    </h1>
+                    <h1 className={`text-white origin-left font-medium text-xl duration-300 ${!open && "scale-0"}`}>YASAY BEACH RESORT</h1>
                 </div>
                 
                 <ul className="flex flex-col pt-6 p-8 mt-3">
