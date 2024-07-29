@@ -171,7 +171,7 @@ function Admin() {
                     <h1 className="text-4xl font-bold mb-4">REGISTER EMPLOYEE</h1>
                     <div className="mt-[50px] h-[770px] border-2 border-gray-400 rounded-[10px] flex justify-around p-[85px] ">
                         <div className="w-[550px] h-[590px] border border-black rounded-[10px] bg-white">
-                            <p className="absolute top-[170px] text-black font-semibold text-[17px]">Place your finger on the scanner</p>
+                            <p className="absolute top-[170px] text-black font-semibold text-[17px]">Place your finger on the scannerrrrr</p>
                             <p className="absolute bottom-[150px] text-black font-semibold text-[17px]">Please give fingerprint sample</p>
                         </div>
 
