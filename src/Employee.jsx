@@ -76,7 +76,7 @@ function Employee() {
     };
 
     const handleTempoBtn = () => {
-        navigate('/admin');
+        navigate('/Admin');
     };
 
     const openModal = () => {

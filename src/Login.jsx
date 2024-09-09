@@ -7,12 +7,12 @@ function Login() {
 
   const handleAdminLoginClick = (event) => {
     event.preventDefault();
-    setLoginType('admin');
+    setLoginType('Admin');
   };
 
   const handleEmployeeLoginClick = (event) => {
     event.preventDefault();
-    setLoginType('employee');
+    setLoginType('Employee');
   };
 
   const handleGoBack = (event) => {
@@ -22,10 +22,10 @@ function Login() {
 
   const handleLogin = (event) => {
     event.preventDefault();
-    if (loginType === 'admin') {
-      navigate('/admin');
-    } else if (loginType === 'employee') {
-      navigate('/employee');
+    if (loginType === 'Admin') {
+      navigate('/Admin');
+    } else if (loginType === 'Employee') {
+      navigate('/Employee');
     }
   };
 
