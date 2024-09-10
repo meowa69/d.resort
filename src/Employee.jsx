@@ -208,7 +208,7 @@ function Employee() {
                     alt="Toggle Sidebar"
                 />
 
-                <div className="flex gap-x-5 items-center bg-[#72BAD5] w-full p-5 shadow-md">
+                <div className="flex gap-x-5 items-center bg-gradient-to-r from-[#1089D3] to-[#12B1D1] w-full p-5 shadow-md">
                     <img
                         src="./src/assets/logo.png"
                         className={`cursor-pointer duration-500 w-20 ${!open && "rotate-[360deg]"}`}
@@ -265,7 +265,7 @@ function Employee() {
                 </ul>
 
                 <div className="absolute bottom-10 w-full flex justify-center p-8">
-                    <div onClick={handleLogout} className="flex justify-center items-center gap-1 px-3 py-3 w-[232px] rounded-[5px] shadow-md bg-[#70b8d3] hover:bg-[#09B0EF] cursor-pointer">
+                    <div onClick={handleLogout} className="flex justify-center items-center gap-1 px-3 py-3 w-[232px] rounded-[5px] shadow-md bg-gradient-to-r from-[#1089D3] to-[#12B1D1] hover:to-[#0f8bb1] cursor-pointer">
                         <img src="./src/assets/logout.png" className="fill-current w-5 h-5" style={{ filter: 'invert(100%)' }} alt="Logout" />
                         {open && (
                             <button className="rounded-md text-white font-semibold tracking-wide cursor-pointer">Logout</button>

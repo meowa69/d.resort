@@ -39,45 +39,60 @@ function Login() {
         <div className="w-[500px] h-[500px] bg-white p-8 rounded-[5px] shadow-lg">
           {loginType ? (
             <>
-              <h2 className="text-[25px] font-bold mb-4 text-center">{loginType.toUpperCase()} LOGIN</h2>
-              <form>
+              <h2 className="text-2xl font-extrabold text-[#1089D3] text-center mb-6">{loginType.toUpperCase()} LOGIN</h2>
+              <form className="mt-6">
                 <div className="mb-4">
                   <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
-                  <input type="text" id="username" className="mt-1 p-2 w-full border rounded" />
+                  <input
+                    type="text"
+                    id="username"
+                    className="mt-1 block w-full bg-white border-2 border-transparent p-3 rounded-[10px] shadow-md placeholder-gray-400 focus:border-[#12B1D1] focus:outline-none"
+                    placeholder="Username"
+                  />
                 </div>
                 
                 <div className="mb-4">
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                  <input type="password" id="password" className="mt-1 p-2 w-full border rounded" />
+                  <input
+                    type="password"
+                    id="password"
+                    className="mt-1 block w-full bg-white border-2 border-transparent p-3 rounded-[10px] shadow-md placeholder-gray-400 focus:border-[#12B1D1] focus:outline-none"
+                    placeholder="Password"
+                  />
                 </div>
 
-                <button type="submit" onClick={handleLogin} className="w-full bg-[#70b8d3] text-white p-2 rounded hover:bg-[#09B0EF]">Login</button>
+                <button
+                  type="submit"
+                  onClick={handleLogin}
+                  className="w-full bg-gradient-to-r from-[#1089D3] to-[#12B1D1] text-white p-3 rounded-[10px] shadow-md hover:to-[#0f8bb1]"
+                >
+                  Login
+                </button>
               </form>
-              <button 
-                onClick={handleGoBack} 
-                className="w-full bg-gray-200 text-gray-800 p-2 rounded mt-4 hover:bg-gray-300"
+              <button
+                onClick={handleGoBack}
+                className="w-full mt-4 bg-gray-200 text-gray-800 p-3 rounded-[10px] shadow-md hover:bg-gray-300"
               >
                 Go Back
               </button>
             </>
           ) : (
-            <>
-              <h2 className="text-[25px] font-bold mb-4 text-center">LOGIN</h2>
-              <div className="flex flex-col items-center">
-                <button 
-                  onClick={handleAdminLoginClick} 
-                  className="w-full bg-[#70b8d3] text-white p-2 rounded mb-4 hover:bg-[#09B0EF]"
-                >
-                  Admin
-                </button>
-                <button 
-                  onClick={handleEmployeeLoginClick} 
-                  className="w-full bg-[#70b8d3] text-white p-2 rounded hover:bg-[#09B0EF]"
-                >
-                  Employee
-                </button>
-              </div>
-            </>
+            <div className="flex flex-col items-center mt-6">
+              <h2 className="text-2xl font-extrabold text-[#1089D3] text-center mb-6">LOGIN</h2>
+
+              <button
+                onClick={handleAdminLoginClick}
+                className="w-full bg-gradient-to-r from-[#1089D3] to-[#12B1D1] text-white p-3 rounded-[10px] mb-4 shadow-md hover:to-[#0f8bb1]"
+              >
+                Admin
+              </button>
+              <button
+                onClick={handleEmployeeLoginClick}
+                className="w-full bg-gradient-to-r from-[#1089D3] to-[#12B1D1] text-white p-3 rounded-[10px] shadow-md hover:to-[#0f8bb1]"
+              >
+                Employee
+              </button>
+            </div>
           )}
         </div>
       </div>

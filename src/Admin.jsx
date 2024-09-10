@@ -2,21 +2,23 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import TextField from '@mui/material/TextField';
 import { saveAs } from 'file-saver';
-import * as XLSX from 'xlsx';
+import ExcelJS from "exceljs";
 import { Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType } from 'docx';
 
 function Admin() {
     const navigate = useNavigate();
     const [open, setOpen] = useState(true);
     const [activeMenu, setActiveMenu] = useState('dashboard');
-    const [tableRows, setTableRows] = useState([]); 
+    const [tableRows, setTableRows] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [isModalOpen, setIsModalOpen] = useState(false); 
-    
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const [date, setDate] = useState(); 
     const [modalData, setModalData] = useState({
         name: '',
         schedule: {
@@ -31,42 +33,6 @@ function Admin() {
     });
     
     const rowsPerPage = 7;
-
-    const handleAddRow = (newRow) => {
-        setTableRows([...tableRows, { id: tableRows.length + 1, ...newRow }]);
-        if ((tableRows.length + 1) > currentPage * rowsPerPage) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const handleDeleteRow = (rowId) => {
-        const updatedRows = tableRows.filter(row => row.id !== rowId).map((row, index) => ({
-            ...row,
-            id: index + 1
-        }));
-        setTableRows(updatedRows);
-
-        if (updatedRows.length <= (currentPage - 1) * rowsPerPage && currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        } else if (updatedRows.length === 0) {
-            setCurrentPage(1);
-        }
-    };
-
-    const handleClearTable = () => {
-        setTableRows([]); // Clear all rows
-        setCurrentPage(1); // Reset pagination to the first page
-    };
-
-    const Menus = [
-        { title: "Dashboard", src: "dashboard" },
-        { title: "Register Employee", src: "add" },
-        { title: "Employee List", src: "group" },
-        { title: "Attendance", src: "calendar" },
-        { title: "Work Schedules", src: "clock" },
-        { title: "Report", src: "report" },
-        { title: "Payroll", src: "money" },
-    ];
 
     useEffect(() => {
         const savedMenu = localStorage.getItem("activeMenu");
@@ -84,8 +50,14 @@ function Admin() {
 
         document.addEventListener('click', handleClickOutside);
 
+        // Update the current time every second
+        const intervalId = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+
         return () => {
             document.removeEventListener('click', handleClickOutside);
+            clearInterval(intervalId); // Cleanup interval on component unmount
         };
     }, []);
 
@@ -142,12 +114,54 @@ function Admin() {
         closeModal();
     };
 
-    // Function to handle Excel download
-    const handleDownloadExcel = () => {
-        const workbook = XLSX.utils.book_new();
-        const worksheetData = [
-            ["#", "Name", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], // Header
-            ...tableRows.map((row, index) => [
+    const handleAddRow = (newRow) => {
+        setTableRows([...tableRows, { id: tableRows.length + 1, ...newRow }]);
+        if ((tableRows.length + 1) > currentPage * rowsPerPage) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handleDeleteRow = (rowId) => {
+        const updatedRows = tableRows.filter(row => row.id !== rowId).map((row, index) => ({
+            ...row,
+            id: index + 1
+        }));
+        setTableRows(updatedRows);
+
+        if (updatedRows.length <= (currentPage - 1) * rowsPerPage && currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        } else if (updatedRows.length === 0) {
+            setCurrentPage(1);
+        }
+    };
+
+    const handleClearTable = () => {
+        setTableRows([]); // Clear all rows
+        setCurrentPage(1); // Reset pagination to the first page
+    };
+
+    const Menus = [
+        { title: "Dashboard", src: "dashboard" },
+        { title: "Register Employee", src: "add" },
+        { title: "Employee List", src: "group" },
+        { title: "Attendance", src: "calendar" },
+        { title: "Work Schedules", src: "clock" },
+        { title: "Report", src: "report" },
+        { title: "Payroll", src: "money" },
+    ];
+
+    // Function to handle Excel download using ExcelJS
+    const handleDownloadExcel = async () => {
+        // Create a new workbook and add a worksheet
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Work Schedules');
+
+        // Add header row
+        worksheet.addRow(["#", "Name", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]);
+
+        // Add data rows
+        tableRows.forEach((row, index) => {
+            worksheet.addRow([
                 index + 1,
                 row.name,
                 ...['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
@@ -156,14 +170,14 @@ function Admin() {
                     if (startTime && endTime) return `${startTime.format('hh:mm A')} - ${endTime.format('hh:mm A')}`;
                     return duty || "";
                 })
-            ])
-        ];
+            ]);
+        });
 
-        const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Work Schedules");
+        // Write the Excel file to a buffer
+        const buffer = await workbook.xlsx.writeBuffer();
 
-        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-        const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        // Create a Blob from the buffer and trigger the download
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         saveAs(blob, 'work_schedules.xlsx');
     };
 
@@ -232,8 +246,9 @@ function Admin() {
         } else if (fileType === 'word') {
             handleDownloadWord();
         }
-        setShowModal(false); // Close the modal after download
+        setShowModal(false); 
     };
+    
     return (
         <div className="min-h-screen flex flex-row bg-white">
             <div className={`${open ? "w-[330px]" : "w-[110px]"} duration-300 h-screen bg-white relative shadow-lg`}>
@@ -244,7 +259,7 @@ function Admin() {
                     alt="Toggle Sidebar"
                 />
 
-                <div className="flex gap-x-5 items-center bg-[#72BAD5] w-full p-5 shadow-md">
+                <div className="flex gap-x-5 items-center bg-gradient-to-r from-[#1089D3] to-[#12B1D1] w-full p-5 shadow-md">
                     <img
                         src="./src/assets/logo.png"
                         className={`cursor-pointer duration-500 w-20 ${!open && "rotate-[360deg]"}`}
@@ -274,7 +289,7 @@ function Admin() {
                     ))}
 
                     <div className="flex w-full justify-center relative top-[325px]">
-                        <div onClick={handleLogout} className="flex justify-center items-center gap-1 px-3 py-3 w-[232px] rounded-[5px] shadow-md bg-[#70b8d3] hover:bg-[#09B0EF] cursor-pointer">
+                        <div onClick={handleLogout} className="flex justify-center items-center gap-1 px-3 py-3 w-[232px] rounded-[5px] shadow-md bg-gradient-to-r from-[#1089D3] to-[#12B1D1] hover:to-[#0f8bb1] cursor-pointer">
                             <img src="./src/assets/logout.png" className="fill-current w-5 h-5" style={{ filter: 'invert(100%)' }} />
                             {open && (
                                 <button className="rounded-md text-white font-semibold tracking-wide cursor-pointer">Logout</button>
@@ -297,7 +312,53 @@ function Admin() {
                 {/* Dashboard Section */}
                 <div id="dashboard" className={`menu-content ${activeMenu === "dashboard" ? "block" : "hidden"} `}>
                     <h1 className="text-4xl font-bold mb-4">DASHBOARD</h1>
-                    <p>This is the dashboard section content.</p>
+
+                    <div className="flex justify-between">
+                        <div>
+                            {/* other content here */}
+                        </div>
+
+                        <div className="flex-col">
+                            <div className="w-100 p-6 bg-white shadow-lg rounded-lg border border-gray-200 mb-4">
+                            <h2 className="text-2xl font-semibold text-gray-800 text-center">Calendar</h2>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateCalendar
+                                    value={date} // Ensure this is a dayjs object
+                                    onChange={(newValue) => setDate(newValue)} // Handle the change properly
+                                />
+                            </LocalizationProvider>
+                            </div>
+
+                            <div className=" w-100  p-6 bg-white shadow-lg rounded-lg border border-gray-200">
+                                <div className="flex items-center mb-4 border-b pb-2 border-gray-200 justify-between">
+                                    <h2 className="text-2xl font-semibold text-gray-800">Attendance Tracker</h2>
+                                    <div className="text-gray-600 text-xl font-mono ">{currentTime.toLocaleTimeString()}</div>
+                                </div>
+                                <table className="min-w-full bg-white">
+                                    <thead>
+                                        <tr className="bg-gray-100 text-gray-700">
+                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">#</th>
+                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
+                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Time In</th>
+                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Time Out</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {/* Example Row */}
+                                        <tr className="hover:bg-gray-50">
+                                            <td className="px-5 py-5 border-b  border-r border-gray-200 bg-white text-sm">1</td>
+                                            <td className="px-5 py-5 border-b  border-r border-gray-200 bg-white text-sm">John Doe</td>
+                                            <td className="px-5 py-5 border-b  border-r border-gray-200 bg-white text-sm">2024-09-10</td>
+                                            <td className="px-5 py-5 border-b  border-r border-gray-200 bg-white text-sm">08:00 AM</td>
+                                            <td className="px-5 py-5 border-b  border-r border-gray-200 bg-white text-sm">05:00 PM</td>
+                                        </tr>
+                                        {/* Add more rows as needed */}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Rigester Employee Section */}
