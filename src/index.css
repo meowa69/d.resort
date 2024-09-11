@@ -35,4 +35,13 @@
     .thDesign{
         @apply px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider
     }
+
+    .table-scrollbar-hide::-webkit-scrollbar {
+        display: none; /* Hides the scrollbar for WebKit browsers */
+    }
+      
+    .table-scrollbar-hide {
+        -ms-overflow-style: none; /* Hides scrollbar for Internet Explorer and Edge */
+        scrollbar-width: none; /* Hides scrollbar for Firefox */
+    }  
 }

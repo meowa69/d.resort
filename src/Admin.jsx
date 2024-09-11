@@ -5,9 +5,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import TextField from '@mui/material/TextField';
-import { saveAs } from 'file-saver';
-import ExcelJS from "exceljs";
-import { Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType } from 'docx';
+import { handleDownloadExcel, handleDownloadWord } from './AdminUtils';
+import CottageModal from './Modal/CottageModal';
 
 function Admin() {
     const navigate = useNavigate();
@@ -17,6 +16,7 @@ function Admin() {
     const [showModal, setShowModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [cottageModalOpen, setCottageModalOpen] = useState(false);
     const [currentTime, setCurrentTime] = useState(new Date());
     const [date, setDate] = useState(); 
     const [modalData, setModalData] = useState({
@@ -31,8 +31,16 @@ function Admin() {
             sunday: { startTime: null, endTime: null, duty: '', dayOff: false },
         }
     });
-    
+
     const rowsPerPage = 7;
+
+    // New state for filtering attendance
+    const [attendanceFilter, setAttendanceFilter] = useState('Day');
+
+    // Sample attendance data
+    const attendanceData = [
+        { id: 1, name: 'John Doe', date: '2024-09-10', timeIn: '08:00 AM', timeOut: '05:00 PM' },
+    ];
 
     useEffect(() => {
         const savedMenu = localStorage.getItem("activeMenu");
@@ -150,103 +158,30 @@ function Admin() {
         { title: "Payroll", src: "money" },
     ];
 
-    // Function to handle Excel download using ExcelJS
-    const handleDownloadExcel = async () => {
-        // Create a new workbook and add a worksheet
-        const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Work Schedules');
+    // Filter attendance data based on the selected filter
+    const filteredAttendanceData = attendanceData.filter(record => {
+        return record.date === '2024-09-10'; 
+    });
 
-        // Add header row
-        worksheet.addRow(["#", "Name", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]);
+    const salesData = [
+        { productName: "Product A", date: "2024-09-10", quantity: 2, price: 50.0 },
+        { productName: "Product B", date: "2024-09-11", quantity: 1, price: 30.0 },
+        { productName: "Product C", date: "2024-09-11", quantity: 1, price: 30.0 },
+        { productName: "Product D", date: "2024-09-11", quantity: 1, price: 30.0 },
+        { productName: "Product E", date: "2024-09-11", quantity: 1, price: 30.0 },
+        { productName: "Product F", date: "2024-09-11", quantity: 1, price: 30.0 },
+        { productName: "Product G", date: "2024-09-11", quantity: 1, price: 30.0 },
+        { productName: "Product H", date: "2024-09-11", quantity: 1, price: 30.0 },
+        { productName: "Product I", date: "2024-09-11", quantity: 1, price: 30.0 },
+    ];
 
-        // Add data rows
-        tableRows.forEach((row, index) => {
-            worksheet.addRow([
-                index + 1,
-                row.name,
-                ...['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
-                    const { startTime, endTime, duty, dayOff } = row.schedule[day];
-                    if (dayOff) return "Day Off";
-                    if (startTime && endTime) return `${startTime.format('hh:mm A')} - ${endTime.format('hh:mm A')}`;
-                    return duty || "";
-                })
-            ]);
-        });
-
-        // Write the Excel file to a buffer
-        const buffer = await workbook.xlsx.writeBuffer();
-
-        // Create a Blob from the buffer and trigger the download
-        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        saveAs(blob, 'work_schedules.xlsx');
-    };
-
-    // Function to handle Word download
-    const handleDownloadWord = async () => {
-        try {
-            console.log("Creating Word document...");
-            
-            // Create a new Word document
-            const doc = new Document({
-                sections: [
-                    {
-                        properties: {},
-                        children: [
-                            new Paragraph("Work Schedules"),
-                            new Table({
-                                rows: [
-                                    new TableRow({
-                                        children: ["#", "Name", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(text => (
-                                            new TableCell({
-                                                width: { size: 1000, type: WidthType.DXA },
-                                                children: [new Paragraph(text)],
-                                            })
-                                        ))
-                                    }),
-                                    ...tableRows.map((row, index) => (
-                                        new TableRow({
-                                            children: [
-                                                new TableCell({ children: [new Paragraph((index + 1).toString())] }),
-                                                new TableCell({ children: [new Paragraph(row.name)] }),
-                                                ...['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => {
-                                                    const { startTime, endTime, duty, dayOff } = row.schedule[day];
-                                                    let cellContent = "";
-                                                    if (dayOff) cellContent = "Day Off";
-                                                    else if (startTime && endTime) cellContent = `${startTime.format('hh:mm A')} - ${endTime.format('hh:mm A')}`;
-                                                    else if (duty) cellContent = duty;
-                                                    return new TableCell({ children: [new Paragraph(cellContent)] });
-                                                })
-                                            ]
-                                        })
-                                    ))
-                                ],
-                            })
-                        ],
-                    },
-                ],
-            });
-    
-            // Pack the document into a blob
-            const blob = await Packer.toBlob(doc);
-            console.log("Word document packed into blob.");
-    
-            // Trigger the download
-            saveAs(blob, 'work_schedules.docx');
-            console.log("Word document downloaded.");
-    
-        } catch (error) {
-            console.error("Error creating or downloading the Word document:", error);
-        }
-    };
-
-    // Function to handle modal download choice
     const handleDownloadChoice = (fileType) => {
         if (fileType === 'excel') {
-            handleDownloadExcel();
+            handleDownloadExcel(tableRows); // Pass tableRows to the function
         } else if (fileType === 'word') {
-            handleDownloadWord();
+            handleDownloadWord(tableRows); // Pass tableRows to the function
         }
-        setShowModal(false); 
+        setShowModal(false);
     };
     
     return (
@@ -314,46 +249,162 @@ function Admin() {
                     <h1 className="text-4xl font-bold mb-4">DASHBOARD</h1>
 
                     <div className="flex justify-between">
-                        <div>
-                            {/* other content here */}
-                        </div>
+                        <div className="flex-row">
+                            <div className="flex space-x-8 h-[200px]">
+                                <div className="bg-gradient-to-r from-[#1089D3] to-[#12B1D1] rounded-lg shadow-xl w-[450px] relative">
+                                    <div className="p-4">
+                                        <h1 className="text-lg font-semibold mb-2 text-white">COTTAGE</h1>
+                                        <p className="text-sm mb-4 text-white">
+                                            Number Booked: 5
+                                            <br />
+                                            Availability: 3
+                                        </p>
+                                        <button
+                                            onClick={() => setCottageModalOpen(true)}
+                                            className="absolute bottom-4 right-4 duration-300 bg-black/0 hover:bg-black/25 text-white font-bold py-2 px-4 rounded"
+                                        >
+                                            View More
+                                        </button>
 
-                        <div className="flex-col">
-                            <div className="w-100 p-6 bg-white shadow-lg rounded-lg border border-gray-200 mb-4">
+                                        <CottageModal 
+                                            isOpen={cottageModalOpen} // Modal open state
+                                            onClose={() => setCottageModalOpen(false)} // Close modal function
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="bg-gradient-to-r from-[#1089D3] to-[#12B1D1] rounded-lg shadow-xl w-[450px] relative">
+                                    <div className="p-4">
+                                        <h1 className="text-lg font-semibold mb-2 text-white">LODGE</h1>
+                                        <p className="text-sm mb-4 text-white">
+                                            Number Booked: 8
+                                            <br />
+                                            Availability: 2
+                                        </p>
+                                        <button
+                                            className="absolute bottom-4 right-4 duration-300 bg-black/0 hover:bg-black/25 text-white font-bold py-2 px-4 rounded"
+                                        >
+                                            View More
+                                        </button>
+                                    </div>
+                                </div>  
+                            </div>
+
+                            <div className="p-6 mx-auto mt-8 bg-white shadow-lg rounded-lg border-gray-200 mb-4 min-h-[610px]">
+                                <div className="flex justify-between">
+                                    <h1 className="text-xl font-bold text-start mb-10">Sales Summary</h1>
+                                    <button className="bg-[#70b8d3] hover:bg-[#09B0EF] mb-10 px-2 text-white text-sm rounded-[5px]">View all</button>
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                    <div className="relative">
+                                        <div className="max-h-[500px] overflow-y-auto table-scrollbar-hide">
+                                            <table className="min-w-full shadow rounded-lg border-collapse">
+                                                <thead className="sticky top-0 bg-white">
+                                                    <tr className="text-center">
+                                                    <th className="text-left px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Product Name</th>
+                                                    <th className="px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Date</th>
+                                                    <th className="px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Quantity</th>
+                                                    <th className="px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Price</th>
+                                                    <th className="px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {salesData.map((sale, index) => (
+                                                    <tr key={index} className="text-center">
+                                                        <td className="text-left px-5 py-5 border-b border-gray-200 bg-white text-sm">{sale.productName}</td>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{sale.date}</td>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">{sale.quantity}</td>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">${sale.price.toFixed(2)}</td>
+                                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">${(sale.quantity * sale.price).toFixed(2)}</td>
+                                                    </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
+                            
+                        <div className="flex-col mr-3">
+                            <div className="p-6 bg-white shadow-lg rounded-lg border-gray-200 mb-4">
                             <h2 className="text-2xl font-semibold text-gray-800 text-center">Calendar</h2>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DateCalendar
-                                    value={date} // Ensure this is a dayjs object
-                                    onChange={(newValue) => setDate(newValue)} // Handle the change properly
+                                    value={date} 
+                                    onChange={(newValue) => setDate(newValue)} 
                                 />
                             </LocalizationProvider>
                             </div>
 
-                            <div className=" w-100  p-6 bg-white shadow-lg rounded-lg border border-gray-200">
+                            
+                            {/* Attendance Tracker */}
+                            <div className="p-6 bg-white shadow-lg rounded-lg border-gray-200">
                                 <div className="flex items-center mb-4 border-b pb-2 border-gray-200 justify-between">
                                     <h2 className="text-2xl font-semibold text-gray-800">Attendance Tracker</h2>
-                                    <div className="text-gray-600 text-xl font-mono ">{currentTime.toLocaleTimeString()}</div>
+                                    <div className="text-gray-600 text-xl font-mono">
+                                        {currentTime.toLocaleTimeString()}
+                                    </div>
                                 </div>
+
+                                {/* Filter Buttons */}
+                                <div className="flex justify-start mb-4">
+                                    {['Day', 'Week', 'Month'].map((filter) => (
+                                        <button
+                                            key={filter}
+                                            className={`px-4 py-2 mx-1 text-sm font-medium text-white rounded-lg ${
+                                                attendanceFilter === filter ? 'bg-[#70b8d3]' : 'bg-gray-400'
+                                            }`}
+                                            onClick={() => setAttendanceFilter(filter)}
+                                        >
+                                            {filter}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Attendance Table */}
                                 <table className="min-w-full bg-white">
                                     <thead>
                                         <tr className="bg-gray-100 text-gray-700">
-                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">#</th>
-                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
-                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Time In</th>
-                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Time Out</th>
+                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                #
+                                            </th>
+                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                Name
+                                            </th>
+                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                Date
+                                            </th>
+                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                Time In
+                                            </th>
+                                            <th className="px-5 py-3 border-b-2 border-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                Time Out
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* Example Row */}
-                                        <tr className="hover:bg-gray-50">
-                                            <td className="px-5 py-5 border-b  border-r border-gray-200 bg-white text-sm">1</td>
-                                            <td className="px-5 py-5 border-b  border-r border-gray-200 bg-white text-sm">John Doe</td>
-                                            <td className="px-5 py-5 border-b  border-r border-gray-200 bg-white text-sm">2024-09-10</td>
-                                            <td className="px-5 py-5 border-b  border-r border-gray-200 bg-white text-sm">08:00 AM</td>
-                                            <td className="px-5 py-5 border-b  border-r border-gray-200 bg-white text-sm">05:00 PM</td>
-                                        </tr>
-                                        {/* Add more rows as needed */}
+                                        {filteredAttendanceData.map((record, index) => (
+                                            <tr key={record.id} className="hover:bg-gray-50">
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                    {index + 1}
+                                                </td>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                    {record.name}
+                                                </td>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                    {record.date}
+                                                </td>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                    {record.timeIn}
+                                                </td>
+                                                <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                    {record.timeOut}
+                                                </td>
+                                            </tr>
+                                            
+                                        ))}
                                     </tbody>
                                 </table>
                             </div>
