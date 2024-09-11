@@ -1,24 +1,22 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-const cottages = [
+const lodges = [
     // Sample data
-    { id: 1, image: '/path/to/image1.jpg', number: 'Cottage 1', type: 'Type A', status: 'Available' },
-    { id: 2, image: '/path/to/image2.jpg', number: 'Cottage 2', type: 'Type B', status: 'Booked' },
-    { id: 3, image: '/path/to/image3.jpg', number: 'Cottage 3', type: 'Type C', status: 'Available' },
-    { id: 4, image: '/path/to/image4.jpg', number: 'Cottage 4', type: 'Type A', status: 'Booked' },
-    { id: 5, image: '/path/to/image5.jpg', number: 'Cottage 5', type: 'Type B', status: 'Available' },
-    { id: 6, image: '/path/to/image6.jpg', number: 'Cottage 6', type: 'Type C', status: 'Booked' },
-    
-    // Add more cottages as needed
+    { id: 1, image: '/path/to/image1.jpg', number: 'Lodge 1', type: 'Type A', status: 'Available' },
+    { id: 2, image: '/path/to/image2.jpg', number: 'Lodge 2', type: 'Type B', status: 'Booked' },
+    { id: 3, image: '/path/to/image3.jpg', number: 'Lodge 3', type: 'Type C', status: 'Available' },
+    { id: 4, image: '/path/to/image4.jpg', number: 'Lodge 4', type: 'Type A', status: 'Booked' },
+    { id: 5, image: '/path/to/image5.jpg', number: 'Lodge 5', type: 'Type B', status: 'Available' },
+    { id: 6, image: '/path/to/image6.jpg', number: 'Lodge 6', type: 'Type C', status: 'Booked' },
 ];
 
-const CottageModal = ({ isOpen, onClose }) => {
+const LodgeModal = ({ isOpen, onClose }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5); // Number of items per page
     const [searchTerm, setSearchTerm] = useState('');
 
-    const filteredCottages = cottages.filter(cottage =>
+    const filteredCottages = lodges.filter(cottage =>
         cottage.number.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -144,9 +142,9 @@ const CottageModal = ({ isOpen, onClose }) => {
 };
 
 // Define PropTypes
-CottageModal.propTypes = {
+LodgeModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired
 };
 
-export default CottageModal;
+export default LodgeModal;

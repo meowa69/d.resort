@@ -7,6 +7,7 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import TextField from '@mui/material/TextField';
 import { handleDownloadExcel, handleDownloadWord } from './AdminUtils';
 import CottageModal from './Modal/CottageModal';
+import LodgeModal from './Modal/LodgeModal';
 
 function Admin() {
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ function Admin() {
     const [currentPage, setCurrentPage] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cottageModalOpen, setCottageModalOpen] = useState(false);
+    const [lodgeModalOpen, setLodgeModalOpen] = useState(false);
     const [currentTime, setCurrentTime] = useState(new Date());
     const [date, setDate] = useState(); 
     const [modalData, setModalData] = useState({
@@ -282,10 +284,16 @@ function Admin() {
                                             Availability: 2
                                         </p>
                                         <button
+                                            onClick={() => setLodgeModalOpen(true)}
                                             className="absolute bottom-4 right-4 duration-300 bg-black/0 hover:bg-black/25 text-white font-bold py-2 px-4 rounded"
                                         >
                                             View More
                                         </button>
+
+                                        <LodgeModal 
+                                            isOpen={lodgeModalOpen} // Modal open state
+                                            onClose={() => setLodgeModalOpen(false)} // Close modal function
+                                        />
                                     </div>
                                 </div>  
                             </div>
