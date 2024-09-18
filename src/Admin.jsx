@@ -202,7 +202,7 @@ function Admin() {
                         className={`cursor-pointer duration-500 w-20 ${!open && "rotate-[360deg]"}`}
                         alt="Logo"
                     />
-                    <h1 className={`text-white origin-left font-medium text-xl duration-300 ${!open && "scale-0"}`}>YASAY BEACH RESORT</h1>
+                    <h1 className={`text-white origin-left font-bold text-xl duration-300 ${!open && "scale-0"}`}>YASAY BEACH RESORT</h1>
                 </div>
                 
                 <ul className="flex flex-col pt-6 p-8 mt-3">
@@ -220,7 +220,7 @@ function Admin() {
                                         alt={menu.title} 
                                     />
                                 </span>
-                                <span className={`text-md font-medium ml-2 ${!open && "hidden"}`}>{menu.title}</span>
+                                <span className={`text-md ml-1 font-semibold ${!open && "hidden"}`}>{menu.title}</span>
                             </a>
                         </li>
                     ))}
@@ -229,7 +229,7 @@ function Admin() {
                         <div onClick={handleLogout} className="flex justify-center items-center gap-1 px-3 py-3 w-[232px] rounded-[5px] shadow-md bg-gradient-to-r from-[#1089D3] to-[#12B1D1] hover:to-[#0f8bb1] cursor-pointer">
                             <img src="./src/assets/logout.png" className="fill-current w-5 h-5" style={{ filter: 'invert(100%)' }} />
                             {open && (
-                                <button className="rounded-md text-white font-semibold tracking-wide cursor-pointer">Logout</button>
+                                <button className="rounded-md text-white font-sans font-semibold tracking-wide cursor-pointer">Logout</button>
                             )}
                         </div>
                     </div>
@@ -251,9 +251,9 @@ function Admin() {
                     <h1 className="text-4xl font-bold mb-4">DASHBOARD</h1>
 
                     <div className="flex justify-between">
-                        <div className="flex-row">
-                            <div className="flex space-x-8 h-[200px]">
-                                <div className="bg-gradient-to-r from-[#1089D3] to-[#12B1D1] rounded-lg shadow-xl w-[450px] relative">
+                        <div className="flex-row w-full mr-5">
+                            <div className="flex space-x-10 h-[200px]">
+                                <div className="bg-gradient-to-r from-[#1089D3] to-[#12B1D1] rounded-lg shadow-xl w-[470px] relative">
                                     <div className="p-4">
                                         <h1 className="text-lg font-semibold mb-2 text-white">COTTAGE</h1>
                                         <p className="text-sm mb-4 text-white">
@@ -275,7 +275,7 @@ function Admin() {
                                     </div>
                                 </div>
 
-                                <div className="bg-gradient-to-r from-[#1089D3] to-[#12B1D1] rounded-lg shadow-xl w-[450px] relative">
+                                <div className="bg-gradient-to-r from-[#1089D3] to-[#12B1D1] rounded-lg shadow-xl w-[470px] relative">
                                     <div className="p-4">
                                         <h1 className="text-lg font-semibold mb-2 text-white">LODGE</h1>
                                         <p className="text-sm mb-4 text-white">
@@ -298,7 +298,7 @@ function Admin() {
                                 </div>  
                             </div>
 
-                            <div className="p-6 mx-auto mt-8 bg-white shadow-lg rounded-lg border-gray-200 mb-4 min-h-[610px]">
+                            <div className="p-6 w-full mx-auto mt-8 bg-white shadow-lg rounded-lg border-gray-200 mb-4 min-h-[610px]">
                                 <div className="flex justify-between">
                                     <h1 className="text-xl font-bold text-start mb-10">Sales Summary</h1>
                                     <button className="bg-[#70b8d3] hover:bg-[#09B0EF] mb-10 px-2 text-white text-sm rounded-[5px]">View all</button>
@@ -310,11 +310,11 @@ function Admin() {
                                             <table className="min-w-full shadow rounded-lg border-collapse">
                                                 <thead className="sticky top-0 bg-white">
                                                     <tr className="text-center">
-                                                    <th className="text-left px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Product Name</th>
-                                                    <th className="px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Date</th>
-                                                    <th className="px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Quantity</th>
-                                                    <th className="px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Price</th>
-                                                    <th className="px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Amount</th>
+                                                        <th className="text-left px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Product Name</th>
+                                                        <th className="px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Date</th>
+                                                        <th className="px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Quantity</th>
+                                                        <th className="px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Price</th>
+                                                        <th className="px-5 py-3 text-sm font-bold text-gray-600 uppercase tracking-wider">Amount</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -335,20 +335,20 @@ function Admin() {
                             </div>
                         </div>  
                             
-                        <div className="flex-col mr-3">
+                        <div className="flex-col mr-2 ml-4">
                             <div className="p-6 bg-white shadow-lg rounded-lg border-gray-200 mb-4">
-                            <h2 className="text-2xl font-semibold text-gray-800 text-center">Calendar</h2>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateCalendar
-                                    value={date} 
-                                    onChange={(newValue) => setDate(newValue)} 
-                                />
-                            </LocalizationProvider>
+                                <h2 className="text-2xl font-semibold text-gray-800 text-center">Calendar</h2>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DateCalendar
+                                        value={date} 
+                                        onChange={(newValue) => setDate(newValue)} 
+                                    />
+                                </LocalizationProvider>
                             </div>
 
                             
                             {/* Attendance Tracker */}
-                            <div className="p-6 bg-white shadow-lg rounded-lg border-gray-200">
+                            <div className="p-6 w-[500px] bg-white shadow-lg rounded-lg border-gray-200">
                                 <div className="flex items-center mb-4 border-b pb-2 border-gray-200 justify-between">
                                     <h2 className="text-2xl font-semibold text-gray-800">Attendance Tracker</h2>
                                     <div className="text-gray-600 text-xl font-mono">

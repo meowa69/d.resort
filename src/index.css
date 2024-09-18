@@ -1,6 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Lemon&display=swap');
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 @layer components {
     .menu-item {
@@ -43,5 +47,9 @@
     .table-scrollbar-hide {
         -ms-overflow-style: none; /* Hides scrollbar for Internet Explorer and Edge */
         scrollbar-width: none; /* Hides scrollbar for Firefox */
-    }  
+    } 
+    
+    .inner-shadow {
+        box-shadow: inset 0px 4px 10px rgba(0, 0, 0, 0.5);
+    }
 }

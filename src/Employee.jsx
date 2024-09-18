@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 function Employee() {
     const navigate = useNavigate();
@@ -12,7 +15,6 @@ function Employee() {
     const [newProduct, setNewProduct] = useState({ name: '', quantity: '', avgPrice: '', amount: '' });
     const [editProductId, setEditProductId] = useState(null);
     const [editedProduct, setEditedProduct] = useState({});
-    const [bookingsOpen, setBookingsOpen] = useState(false);
     const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
     const [receiptProducts, setReceiptProducts] = useState([]);
     const [receiptDate, setReceiptDate] = useState(new Date());
@@ -20,16 +22,63 @@ function Employee() {
     const [salesReportData, setSalesReportData] = useState([]);
     const [expandedReports, setExpandedReports] = useState(salesReportData.map(() => false));
     const [optionMenuVisible, setOptionMenuVisible] = useState(Array(salesReportData.length).fill(false));
+    const [currentView, setCurrentView] = useState('cottage');
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const [date, setDate] = useState(); 
 
     const sidebarRef = useRef(null);
-    const submenuRef = useRef(null);
-
+    
     const Menus = [
         { title: "Dashboard", src: "dashboard" },
-        { title: "Bookings", src: "booking", submenus: [{ title: "Cottage", src: "cottage" }, { title: "Lodge", src: "lodge" }] },
+        { title: "Bookings", src: "booking"},
         { title: "Product", src: "product" },
         { title: "Sales Report", src: "report" },
     ];
+
+    const cottagesData = [
+        { id: 1, image: "https://via.placeholder.com/64", type: "Cottage A", status: "Available" },
+        { id: 2, image: "https://via.placeholder.com/64", type: "Cottage B", status: "Booked" },
+        { id: 3, image: "https://via.placeholder.com/64", type: "Cottage C", status: "Available" },
+        { id: 4, image: "https://via.placeholder.com/64", type: "Cottage D", status: "Available" },
+        { id: 5, image: "https://via.placeholder.com/64", type: "Cottage A", status: "Available" },
+        { id: 6, image: "https://via.placeholder.com/64", type: "Cottage B", status: "Booked" },
+        { id: 7, image: "https://via.placeholder.com/64", type: "Cottage C", status: "Available" },
+        { id: 8, image: "https://via.placeholder.com/64", type: "Cottage D", status: "Available" },
+        { id: 9, image: "https://via.placeholder.com/64", type: "Cottage A", status: "Available" },
+        { id: 10, image: "https://via.placeholder.com/64", type: "Cottage B", status: "Booked" },
+        { id: 11, image: "https://via.placeholder.com/64", type: "Cottage C", status: "Available" },
+        { id: 12, image: "https://via.placeholder.com/64", type: "Cottage D", status: "Available" },
+    ];
+
+    const lodgesData = [
+        { id: 1, image: "https://via.placeholder.com/64", type: "Lodge A", status: "Available" },
+        { id: 2, image: "https://via.placeholder.com/64", type: "Lodge B", status: "Booked" },
+        { id: 3, image: "https://via.placeholder.com/64", type: "Lodge C", status: "Available" },
+        { id: 4, image: "https://via.placeholder.com/64", type: "Lodge D", status: "Available" },
+        { id: 5, image: "https://via.placeholder.com/64", type: "Lodge A", status: "Available" },
+        { id: 6, image: "https://via.placeholder.com/64", type: "Lodge B", status: "Booked" },
+        { id: 7, image: "https://via.placeholder.com/64", type: "Lodge C", status: "Available" },
+        { id: 8, image: "https://via.placeholder.com/64", type: "Lodge D", status: "Available" },
+        { id: 9, image: "https://via.placeholder.com/64", type: "Lodge A", status: "Available" },
+        { id: 10, image: "https://via.placeholder.com/64", type: "Lodge B", status: "Booked" },
+        { id: 11, image: "https://via.placeholder.com/64", type: "Lodge C", status: "Available" },
+        { id: 12, image: "https://via.placeholder.com/64", type: "Lodge D", status: "Available" },
+    ];
+
+    const switchView = (view) => {
+        setCurrentView(view);
+    };
+
+    // Get the data and heading based on current view
+    const tableData = currentView === 'cottage' ? cottagesData : lodgesData;
+    const heading = currentView === 'cottage' ? 'Cottage' : 'Lodge';
+
+    useEffect(() => {
+        const savedMenu = localStorage.getItem("activeMenu");
+        if (savedMenu) {
+            setActiveMenu(savedMenu);
+        }
+    }, []);
 
     useEffect(() => {
         const savedMenu = localStorage.getItem("activeMenu");
@@ -38,20 +87,6 @@ function Employee() {
         } else {
             setActiveMenu("dashboard");
         }
-
-        const handleClickOutside = (event) => {
-            if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-                if (submenuRef.current && !submenuRef.current.contains(event.target)) {
-                    setBookingsOpen(false);
-                }
-            }
-        };
-
-        document.addEventListener('click', handleClickOutside);
-
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
     }, []);
 
     useEffect(() => {
@@ -59,17 +94,18 @@ function Employee() {
     }, [activeMenu]);
 
     const handleMenuClick = (src) => {
-        if (src === "booking") {
-            setBookingsOpen(!bookingsOpen);
-        } else {
-            setActiveMenu(src);
-            setBookingsOpen(false);
-        }
-    };
-
-    const handleSubMenuClick = (src) => {
+        console.log('Clicked menu:', src); // Check what menu is clicked
         setActiveMenu(src);
     };
+    
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+    
+        return () => clearInterval(intervalId);
+    }, []);
 
     const handleLogout = () => {
         navigate('/');
@@ -77,6 +113,10 @@ function Employee() {
 
     const handleTempoBtn = () => {
         navigate('/Admin');
+    };
+
+    const handleTempoBtnToBooking = () => {
+        navigate('/Booking');
     };
 
     const openModal = () => {
@@ -214,7 +254,7 @@ function Employee() {
                         className={`cursor-pointer duration-500 w-20 ${!open && "rotate-[360deg]"}`}
                         alt="Logo"
                     />
-                    <h1 className={`text-white origin-left font-medium text-xl duration-300 ${!open && "scale-0"}`}>
+                    <h1 className={`text-white origin-left font-bold text-xl duration-300 ${!open && "scale-0"}`}>
                         YASAY BEACH RESORT
                     </h1>
                 </div>
@@ -222,44 +262,20 @@ function Employee() {
                 <ul className="flex flex-col pt-6 p-8 mt-3">
                     {Menus.map((menu, index) => (
                         <li key={index} className="mb-2">
-                            <div>
-                                <a
-                                    href={`#${menu.src}`}
-                                    className={`menu-item ${activeMenu === menu.src ? "active" : "inactive"}`}
-                                    onClick={() => handleMenuClick(menu.src)}
-                                >
-                                    <span className="inline-flex items-center justify-center h-12 w-12 text-lg">
-                                        <img
-                                            src={`./src/assets/${menu.src}.png`}
-                                            className={`w-5 h-5 ${!open ? "minimized-zoom" : ""}`}
-                                            alt={menu.title}
-                                        />
-                                    </span>
-                                    <span className={`text-md font-medium ml-2 ${!open && "hidden"}`}>{menu.title}</span>
-                                </a>
-                                {menu.submenus && bookingsOpen && (
-                                    <ul ref={submenuRef} className={`ml-5 transition-all duration-300 ${open ? 'relative' : 'absolute left-[110px] top-[230px]'} bg-gray-100 rounded-lg w-[250px] z-10`}>
-                                        {menu.submenus.map((submenu, subIndex) => (
-                                            <li key={subIndex}>
-                                                <a
-                                                    href={`#${submenu.src}`}
-                                                    className={`submenu-item ${activeMenu === submenu.src ? "active" : "inactive"}`}
-                                                    onClick={() => handleSubMenuClick(submenu.src)}
-                                                >
-                                                    <span className="inline-flex items-center justify-center h-12 w-12 text-lg">
-                                                        <img
-                                                            src={`./src/assets/${submenu.src}.png`}
-                                                            className={`w-5 h-5 ${!open ? "minimized-zoom" : ""}`}
-                                                            alt={submenu.title}
-                                                        />
-                                                    </span>
-                                                    <span className="text-md font-medium ml-2">{submenu.title}</span>
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
+                            <a
+                                href={`#${menu.src}`}
+                                className={`menu-item ${activeMenu === menu.src ? "active" : "inactive"}`}
+                                onClick={() => handleMenuClick(menu.src)}
+                            >
+                                <span className="inline-flex items-center justify-center h-12 w-12 text-lg">
+                                    <img 
+                                        src={`./src/assets/${menu.src}.png`} 
+                                        className={`w-5 h-5 ${!open ? "minimized-zoom" : ""}`} 
+                                        alt={menu.title} 
+                                    />
+                                </span>
+                                <span className={`text-md font-semibold ml-1 ${!open && "hidden"}`}>{menu.title}</span>
+                            </a>
                         </li>
                     ))}
                 </ul>
@@ -287,19 +303,133 @@ function Employee() {
                 {/* Dashboard Section */}
                 <div id="dashboard" className={`menu-content ${activeMenu === "dashboard" ? "block" : "hidden"}`}>
                     <h1 className="text-4xl font-bold mb-4">DASHBOARD</h1>
-                    <div className="bg-white p-8 rounded-md w-full border-2 border-gray-400 mt-[50px]"></div>
+                    
+
+                    <div className="flex justify-between">
+                        <div className="flex-row w-full mr-5">
+                            <div className="flex space-x-10 h-[200px]">
+                                <div 
+                                    className="relative rounded-lg shadow-xl w-[470px] cursor-pointer"
+                                    style={{ backgroundImage: "url('./src/assets/cottagebg.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-[#000] to-[#12B1D1] opacity-50 rounded-lg"></div>
+                                    <div className="relative flex h-full items-center gap-2 p-4">
+                                        <div className="flex flex-col p-2">
+                                            <h1 className="text-white font-bold text-[20px]">Lodge</h1>
+                                            <p className="text-white font-semibold line-clamp-3">Total of Lodges:</p>
+                                            <p className="text-white font-semibold line-clamp-3">Availability:</p>
+                                            <p className="text-white font-semibold line-clamp-3">Booked:</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div 
+                                    className="relative rounded-lg shadow-xl w-[470px] cursor-pointer"
+                                    style={{ backgroundImage: "url(./src/assets/lodgebg.jpg)", backgroundSize: 'cover', backgroundPosition: 'center' }}
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-[#000] to-[#12B1D1] opacity-50 rounded-lg"></div>
+                                    <div className="relative flex h-full w-full items-center gap-2 p-4">
+                                        <div className="flex flex-col">
+                                            <h1 className="text-white font-bold text-[20px]">Lodge</h1>
+                                            <p className="text-white font-semibold line-clamp-3">Total of Lodges:</p>
+                                            <p className="text-white font-semibold line-clamp-3">Availability:</p>
+                                            <p className="text-white font-semibold line-clamp-3">Booked:</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div className="flex-row w-full h-[615px] mt-8 p-6 mx-auto bg-white shadow-lg rounded-lg border-gray-200">
+                                <div className="flex justify-between mb-5">
+                                    <h1 className="text-2xl font-bold">{heading}</h1>
+                                    <div>
+                                        <button
+                                            onClick={() => switchView('cottage')}
+                                            className={`text-sm p-2 w-[100px] mr-3 text-white cursor-pointer rounded-[5px] shadow-md ${
+                                                currentView === 'cottage' ? 'bg-[#09B0EF]' : 'bg-[#70b8d3]'
+                                            } hover:bg-[#09B0EF]`}
+                                        >
+                                            Cottage
+                                        </button>
+                                        <button
+                                            onClick={() => switchView('lodge')}
+                                            className={`text-sm p-2 w-[100px] text-white cursor-pointer rounded-[5px] shadow-md ${
+                                                currentView === 'lodge' ? 'bg-[#09B0EF]' : 'bg-[#70b8d3]'
+                                            } hover:bg-[#09B0EF]`}
+                                        >
+                                            Lodge
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                    <div className="relative">
+                                        <div className="max-h-[500px] overflow-y-auto">
+                                            <table className="w-full">
+                                                <thead className="sticky top-0 text-xs text-gray-700 uppercase bg-gray-100">
+                                                    <tr className="text-center">
+                                                        <th className="px-3 py-3 text-sm font-bold uppercase tracking-wider">#</th>
+                                                        <th className="px-3 py-3 text-sm font-bold uppercase tracking-wider">Type</th>
+                                                        <th className="px-3 py-3 text-sm font-bold uppercase tracking-wider">Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {tableData.map((item, index) => (
+                                                        <tr key={index} className="text-center items-center">
+                                                            <td className="px-3 py-3 border-b bg-white text-sm">{item.id}</td>
+                                                            <td className="px-3 py-3 border-b bg-white text-sm">
+                                                                <div className="flex items-center justify-center">
+                                                                    <img
+                                                                        src={item.image}
+                                                                        alt={item.type}
+                                                                        className="w-16 h-16 object-cover rounded mr-3"
+                                                                    />
+                                                                    {item.type}
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-3 py-3 border-b bg-white text-sm">{item.status}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="flex-col mr-2 ml-4">
+                            <div className="p-4 bg-white shadow-lg rounded-lg border-gray-200 mb-4">
+                                <h2 className="text-2xl font-semibold text-gray-800 text-center">Calendar</h2>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DateCalendar
+                                        value={date} 
+                                        onChange={(newValue) => setDate(newValue)} 
+                                    />
+                                </LocalizationProvider>
+                            </div>
+
+                            <div className="p-6 w-[500px] min-h-[430px] bg-white shadow-lg rounded-lg border-gray-200">
+                                <div className="flex justify-between items-center">
+                                    <hi className="text-2xl font-semibold text-gray-800">Notification</hi>
+                                    <div className="text-gray-600 text-xl font-mono">
+                                        {currentTime.toLocaleTimeString()}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Booking Cottage Section */}
-                <div id="booking_cottage" className={`menu-content ${activeMenu === "cottage" ? "block" : "hidden"}`}>
-                    <h1 className="text-4xl font-bold mb-4">BOOKING COTTAGE</h1>
-                    <div className="bg-white p-8 rounded-md w-full border-2 border-gray-400 mt-[50px]"></div>
-                </div>
+                {/* Booking Section */}
+                <div id="booking" className={`menu-content ${activeMenu === "booking" ? "block" : "hidden"}`}>
+                    <h1 className="text-4xl font-bold mb-4">BOOKING</h1>
+                    <div className="bg-white p-8 rounded-md w-full border-2 border-gray-400 mt-[50px]">
 
-                {/* Booking Lodge Section */}
-                <div id="booking_lodge" className={`menu-content ${activeMenu === "lodge" ? "block" : "hidden"}`}>
-                    <h1 className="text-4xl font-bold mb-4">BOOKING LODGE</h1>
-                    <div className="bg-white p-8 rounded-md w-full border-2 border-gray-400 mt-[50px]"></div>
+                    <button className="rounded-md bg-blue-300 text-white font-semibold tracking-wide cursor-pointer" onClick={handleTempoBtnToBooking}>TempoBTN to Online Booking</button>
+                    </div>
+
                 </div>
 
                 {/* Product Section */}
