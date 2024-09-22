@@ -45,7 +45,7 @@ const Input = ({
         <div className="mx-auto mt-8">
             <div className="flex justify-center mt-4">
                 <div className="mr-4">
-                    <form>
+                    <form onSubmit={(e) => e.preventDefault()}> {/* Prevent default form submission */}
                         <div className="relative">
                             <select
                                 className="bg-white border border-gray-300 text-gray-900 text-md rounded-md focus:ring-blue-500 focus:border-blue-500 block w-96 ps-4 p-4 pr-10 appearance-none"
@@ -80,13 +80,17 @@ const Input = ({
                             <div ref={datePickerRef} className="absolute top-full mt-2 p-4 border rounded-lg shadow-md bg-white z-10">
                                 <div className="flex border-b border-gray-300 mb-4">
                                     <button
-                                        onClick={() => setTab('calendar')}
+                                        onClick={() => {
+                                            setTab('calendar');
+                                        }}
                                         className={`px-6 py-3 font-semibold ${tab === 'calendar' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
                                     >
                                         Calendar
                                     </button>
                                     <button
-                                        onClick={() => setTab('flexible')}
+                                        onClick={() => {
+                                            setTab('flexible');
+                                        }}
                                         className={`px-6 py-3 font-semibold ${tab === 'flexible' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
                                     >
                                         Flexible
@@ -96,12 +100,16 @@ const Input = ({
                                     <div className="flex gap-4">
                                         <DatePicker
                                             selected={startDate}
-                                            onChange={(date) => setStartDate(date)}
+                                            onChange={(date) => {
+                                                setStartDate(date);
+                                                if (date && endDate && date >= endDate) {
+                                                    setEndDate(null);
+                                                }
+                                            }}
                                             startDate={startDate}
                                             endDate={endDate}
                                             selectsStart
                                             inline
-                                            className="border border-gray-300 rounded-md"
                                         />
                                         <DatePicker
                                             selected={endDate}
@@ -111,7 +119,6 @@ const Input = ({
                                             selectsEnd
                                             minDate={startDate}
                                             inline
-                                            className="border border-gray-300 rounded-md"
                                         />
                                     </div>
                                 ) : (
@@ -148,98 +155,100 @@ const Input = ({
                             type="text"
                             readOnly
                             onClick={() => setShowGuestDropdown((prev) => !prev)}
-                            value={`${adults} Adults, ${children} Children, ${selectedOption === 'Lodge' ? rooms : (selectedOption === 'Cottage' ? cottages : 'N/A')} ${selectedOption === 'Lodge' ? (rooms > 1 ? 'Rooms' : 'Room') : (selectedOption === 'Cottage' ? (cottages > 1 ? 'Cottages' : 'Cottage') : '')}`}
+                            value={`${adults} Adults, ${children} Children, ${selectedOption === 'Lodge' ? rooms : (selectedOption === 'Cottage' ? cottages : 'N/A')}`}
                             className="bg-white border border-gray-300 text-gray-900 text-md rounded-md focus:ring-blue-500 focus:border-blue-500 block w-96 p-4 cursor-pointer"
                         />
-                    {showGuestDropdown && (
-                        <div ref={guestDropdownRef} className="absolute top-full mt-2 bg-white border border-gray-300 rounded-md shadow-md z-10 w-full">
-                            <div className="p-4">
-                                {/* Adults */}
-                                <div className="flex justify-between items-center">
-                                    <span>Adults</span>
-                                    <div className="flex items-center space-x-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => setAdults(Math.max(1, adults - 1))}
-                                            className="px-2 py-1 bg-gray-200 rounded">-
-                                         </button>
-                                        <span>{adults}</span>
-                                        <button
-                                            type="button"
-                                            onClick={() => setAdults(adults + 1)}
-                                            className="px-2 py-1 bg-gray-200 rounded">+
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Children */}
-                                <div className="flex justify-between items-center mt-4">
-                                    <span>Children</span>
-                                    <div className="flex items-center space-x-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => setChildren(Math.max(0, children - 1))}
-                                            className="px-2 py-1 bg-gray-200 rounded">-
-                                        </button>
-                                        <span>{children}</span>
-                                        <button
-                                            type="button"
-                                            onClick={() => setChildren(children + 1)}
-                                            className="px-2 py-1 bg-gray-200 rounded">+
-                                        </button>
-                                    </div>
-                                </div>
-
-                                                {/* Rooms or Cottages */}
-                                {selectedOption === 'Lodge' && (
-                                    <div className="flex justify-between items-center mt-4">
-                                        <span>Rooms</span>
+                        {showGuestDropdown && (
+                            <div ref={guestDropdownRef} className="absolute top-full mt-2 bg-white border border-gray-300 rounded-md shadow-md z-10 w-full">
+                                <div className="p-4">
+                                    {/* Adults */}
+                                    <div className="flex justify-between items-center">
+                                        <span>Adults</span>
                                         <div className="flex items-center space-x-2">
                                             <button
                                                 type="button"
-                                                onClick={() => setRooms(Math.max(1, rooms - 1))}
+                                                onClick={() => setAdults(Math.max(1, adults - 1))}
                                                 className="px-2 py-1 bg-gray-200 rounded">-
                                             </button>
-                                            <span>{rooms}</span>
+                                            <span>{adults}</span>
                                             <button
                                                 type="button"
-                                                onClick={() => setRooms(rooms + 1)}
+                                                onClick={() => setAdults(adults + 1)}
                                                 className="px-2 py-1 bg-gray-200 rounded">+
                                             </button>
                                         </div>
                                     </div>
-                                )}
 
-                            {selectedOption === 'Cottage' && (
-                                <div className="flex justify-between items-center mt-4">
-                                    <span>Cottages</span>
-                                    <div className="flex items-center space-x-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => setCottages(Math.max(1, cottages - 1))}
-                                            className="px-2 py-1 bg-gray-200 rounded">-
-                                        </button>
-                                        <span>{cottages}</span>
-                                        <button
-                                            type="button"
-                                            onClick={() => setCottages(cottages + 1)}
-                                            className="px-2 py-1 bg-gray-200 rounded">+
-                                        </button>                                    
+                                    {/* Children */}
+                                    <div className="flex justify-between items-center mt-4">
+                                        <span>Children</span>
+                                        <div className="flex items-center space-x-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => setChildren(Math.max(0, children - 1))}
+                                                className="px-2 py-1 bg-gray-200 rounded">-
+                                            </button>
+                                            <span>{children}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => setChildren(children + 1)}
+                                                className="px-2 py-1 bg-gray-200 rounded">+
+                                            </button>
+                                        </div>
                                     </div>
+
+                                    {/* Rooms or Cottages */}
+                                    {selectedOption === 'Lodge' && (
+                                        <div className="flex justify-between items-center mt-4">
+                                            <span>Rooms</span>
+                                            <div className="flex items-center space-x-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setRooms(Math.max(1, rooms - 1))}
+                                                    className="px-2 py-1 bg-gray-200 rounded">-
+                                                </button>
+                                                <span>{rooms}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setRooms(rooms + 1)}
+                                                    className="px-2 py-1 bg-gray-200 rounded">+
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {selectedOption === 'Cottage' && (
+                                        <div className="flex justify-between items-center mt-4">
+                                            <span>Cottages</span>
+                                            <div className="flex items-center space-x-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setCottages(Math.max(1, cottages - 1))}
+                                                    className="px-2 py-1 bg-gray-200 rounded">-
+                                                </button>
+                                                <span>{cottages}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setCottages(cottages + 1)}
+                                                    className="px-2 py-1 bg-gray-200 rounded">+
+                                                </button>                                    
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                                )}
                             </div>
-                        </div>
                         )}
                     </div>
                 </div>
 
                 {/* Move the Search button here */}
-                <div className="flex justify-center items-center w-[100px] h-[55px] rounded-md shadow-md bg-[#09B0EF] hover:bg-[#3ebae7] cursor-pointer ml">
-                    <button className="text-white font-semibold" onClick={handleSearch}>
-                        Search
-                    </button>
-                </div>
+                <button 
+                    type="button" // Ensure this is a button and not a submit
+                    className="flex justify-center items-center w-[100px] h-[55px] rounded-md shadow-md bg-[#09B0EF] hover:bg-[#3ebae7] cursor-pointer ml"
+                    onClick={handleSearch}
+                >
+                    <span className="text-white font-semibold">Search</span>
+                </button>
             </div>
         </div>
     );

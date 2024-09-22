@@ -67,7 +67,7 @@ function Admin() {
 
         return () => {
             document.removeEventListener('click', handleClickOutside);
-            clearInterval(intervalId); // Cleanup interval on component unmount
+            clearInterval(intervalId); 
         };
     }, []);
 

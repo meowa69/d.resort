@@ -6,20 +6,23 @@ import Input from './components/Inputs';
 import CottageSlider from './OnlineBookingSlider/CottageSlider';
 import LodgeSlider from './OnlineBookingSlider/LodgeSlider';
 import ImgSlider from './OnlineBookingSlider/ImgSlider';
+import Loader from './components/Loader';
 
 function Booking() {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showGuestDropdown, setShowGuestDropdown] = useState(false);
-    const [tab, setTab] = useState('calendar');
     const [adults, setAdults] = useState(1);
+    const [children, setChildren] = useState(0);
     const [numChildren, setNumChildren] = useState(0);
     const [rooms, setRooms] = useState(1);
     const [cottages, setCottages] = useState(1);
     const [flexibleDays, setFlexibleDays] = useState(null);
     const [selectedOption, setSelectedOption] = useState('');
+    const [tab, setTab] = useState('calendar'); // Default tab
     const datePickerRef = useRef(null);
     const guestDropdownRef = useRef(null);
 
@@ -49,6 +52,18 @@ function Booking() {
         }
     };
 
+    useEffect(() => {
+        // Simulate loading delay
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 2000); 
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (loading) {
+        return <Loader />;
+    }
+
     return (
         <div className="min-h-screen flex-col bg-white">
             <Header />
@@ -59,13 +74,14 @@ function Booking() {
                 setEndDate={setEndDate}
                 showDatePicker={showDatePicker}
                 setShowDatePicker={setShowDatePicker}
-                tab={tab}
-                setTab={setTab}
                 flexibleDays={flexibleDays}
                 setFlexibleDays={setFlexibleDays}
                 adults={adults}
                 setAdults={setAdults}
-                numChildren={numChildren} 
+                numChildren={numChildren}
+                // eslint-disable-next-line react/no-children-prop
+                children={children}
+                setChildren={setChildren}
                 setNumChildren={setNumChildren}
                 selectedOption={selectedOption}
                 setSelectedOption={setSelectedOption}
@@ -78,6 +94,8 @@ function Booking() {
                 handleSearch={handleSearch}
                 datePickerRef={datePickerRef}
                 guestDropdownRef={guestDropdownRef}
+                tab={tab} 
+                setTab={setTab} 
             />
             <div className="mx-auto mt-8">
                 <div className="bg-gradient-to-r from-[#1089D3] to-[#12B1D1] p-6 rounded-lg flex space-x-6 items-center justify-between w-full max-w-[1200px] mx-auto mt-16">
