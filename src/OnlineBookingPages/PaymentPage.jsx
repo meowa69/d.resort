@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types'; // Import PropTypes
 import { useState, useEffect } from "react";
 import Loader from '../components/Loader';
+import { Link } from 'react-router-dom';
+
 
 function Payment({ startDate, endDate }) {
     const [loading, setLoading] = useState(true);
@@ -10,15 +12,12 @@ function Payment({ startDate, endDate }) {
         email: '',
         mobile: '',
     });
-    const [gcashPayment, setGcashPayment] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleCheckboxChange = () => {
-        setGcashPayment(!gcashPayment);
-    };
+   
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -37,7 +36,17 @@ function Payment({ startDate, endDate }) {
 
     return (
         <div className="min-h-screen flex flex-col bg-white">
-            <div className="flex-grow flex justify-center">
+            <header className="bg-gradient-to-r from-[#1089D3] to-[#12B1D1] w-full h-full shadow-md">
+                <div className="max-w-7xl mx-auto flex justify-between items-center p-3 px-8">
+                    <div className="flex items-center space-x-3">
+                        <img src="./src/assets/logo.png" alt="logo" className="w-16 h-16" />
+                        <h1 className="bg-clip-text text-transparent bg-white text-[35px] font-bold font-lemon cursor-pointer">
+                            <Link to="/booking">D.Yasay Resort</Link>
+                        </h1>
+                    </div> 
+                </div>
+            </header>
+            <div className="flex-grow flex justify-center mt-10">
                 <div className="w-full max-w-[1200px] flex">
                     <div className="w-2/3 p-4">
                         <div className="border rounded-md p-4">
@@ -101,23 +110,16 @@ function Payment({ startDate, endDate }) {
                         {/* Step 2: Payment Details */}
                         <div className="p-4 border rounded-md mt-4">
                             <h2 className="text-2xl font-bold mb-4">Step 2: Payment Details</h2>
-                            <h3 className="text-lg font-semibold">Choose Payment Method</h3>
+                            <h3 className="text-lg font-semibold">We only accept Gcash payment</h3>
                             <label className="flex items-center mt-2">
                                 <input
-                                    type="radio"
-                                    checked={gcashPayment}
-                                    onChange={handleCheckboxChange}
+                                    type="checkbox"
                                     className="mr-2"
                                 />
-                                <span className="text-sm">Pay via GCash</span>
+                                <img src="./src/assets/gcash.png" alt=""  className="w-8 h-5 rounded-[3px]"/>
+                                <span className="text-sm ml-2">GCash</span>
                             </label>
-                            {gcashPayment && (
-                                <div className="mt-4">
-                                    <p>Please send your payment to the following GCash number:</p>
-                                    <p className="font-bold">+63 912 345 6789</p>
-                                    <p>After payment, please take a screenshot of the confirmation and send it to us.</p>
-                                </div>
-                            )}
+                            
                         </div>
 
                         {/* Cancellation Policy */}
@@ -146,13 +148,47 @@ function Payment({ startDate, endDate }) {
                         <div className="w-[400px] p-4 flex flex-col ">
                             <div className="w-full border p-4 rounded-md">
                                 <div>
-                                    <img src="./src/assets/sample1.jpg" className="w-full h-auto rounded-md mb-4" />
+                                    {/* Image of the Accommodation */}
+                                    <img src="./src/assets/sample1.jpg" className="w-full h-[250px] rounded-md mb-4" />
                                 </div>
                                 
+                                {/* Main Details Block */}
                                 <div className="border p-4 rounded-md shadow-sm">
-                                    <h3 className="text-xl font-bold mb-2">Cottage Name</h3>
-                                    <p className="">Check-in: {formatDate(startDate)}</p>
-                                    <p className="">Check-out: {formatDate(endDate)}</p>
+                                    <h3 className="text-xl font-bold mb-2">Palms Cove Resort</h3>
+                                    <div className="flex items-center mb-2">
+                                        <span className="text-green-600 text-lg font-semibold">8.8</span>
+                                        <span className="text-sm text-gray-500 ml-2">Excellent</span>
+                                    </div>
+                                    <p className="text-sm text-gray-500">Hotels.com 54 guest reviews</p>
+
+                                    {/* Check-in and Check-out details */}
+                                    <div className="mt-4">
+                                        <p className="text-md">Check-in: <span className="font-semibold">{formatDate(startDate)}</span></p>
+                                        <p className="text-md">Check-out: <span className="font-semibold">{formatDate(endDate)}</span></p>
+                                        <p className="text-sm text-gray-500 mt-1">2 nights, 1 unit</p>
+                                    </div>
+                                </div>
+
+                                {/* Price Breakdown Section */}
+                                <div className="border mt-4 p-4 rounded-md shadow-sm">
+                                    <h3 className="text-lg font-bold mb-2">Price Breakdown</h3>
+                                    <div className="flex justify-between text-sm">
+                                        <span>Avg Rate:</span>
+                                        <span>₱7,371.51</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm mt-2">
+                                        <span>2 nights:</span>
+                                        <span>₱14,743.02</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm mt-2">
+                                        <span>Taxes and Fees:</span>
+                                        <span>₱1,769.16</span>
+                                    </div>
+                                    <div className="flex justify-between text-lg font-semibold mt-4 border-t pt-2">
+                                        <span>Total Price:</span>
+                                        <span>₱16,512.18</span>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>

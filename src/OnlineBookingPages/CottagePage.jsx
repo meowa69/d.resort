@@ -5,9 +5,11 @@ import Input from "../components/Inputs";
 import Loader from '../components/Loader';
 import { useNavigate } from 'react-router-dom';
 
-
 function CottagePage() {
     const navigate = useNavigate();
+    
+    // Simulate user authentication state (null means not logged in)
+    const [user] = useState(null); // Replace null with user object if logged in
     const [loading, setLoading] = useState(true);
     const [isHeart1Clicked, setIsHeart1Clicked] = useState(false);
     const [isHeart2Clicked, setIsHeart2Clicked] = useState(false);
@@ -17,13 +19,11 @@ function CottagePage() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [tab, setTab] = useState('calendar');
     const [flexibleDays, setFlexibleDays] = useState('');
-    const [adults, setAdults] = useState(1);
-    const [children, setChildren] = useState(0);
+    const [persons, setPersons] = useState(1);
     const [selectedOption, setSelectedOption] = useState('');
     const [showGuestDropdown, setShowGuestDropdown] = useState(false);
     const [rooms, setRooms] = useState(1);
     const [cottages, setCottages] = useState(1);
-
 
     useEffect(() => {
         // Simulate loading delay
@@ -41,6 +41,16 @@ function CottagePage() {
         navigate('/payment');
     };
 
+    const handleHeartClick = (isHeartClicked, setIsHeartClicked) => {
+        if (!user) {
+            // If user is not logged in, redirect to login page
+            navigate('/sign-in');
+        } else {
+            // If user is logged in, toggle the heart icon
+            setIsHeartClicked(!isHeartClicked);
+        }
+    };
+
     return (
         <div className="min-h-screen flex flex-col bg-white">
             <Header />
@@ -55,11 +65,8 @@ function CottagePage() {
                 setTab={setTab}
                 flexibleDays={flexibleDays}
                 setFlexibleDays={setFlexibleDays}
-                adults={adults}
-                setAdults={setAdults}
-                // eslint-disable-next-line react/no-children-prop
-                children={children}
-                setChildren={setChildren}
+                persons={persons}
+                setPersons={setPersons}
                 selectedOption={selectedOption}
                 setSelectedOption={setSelectedOption}
                 showGuestDropdown={showGuestDropdown}
@@ -167,7 +174,7 @@ function CottagePage() {
                                     </button>
                                     <button
                                         className="flex items-center justify-center rounded-lg bg-transparent p-0 relative focus:outline-none"
-                                        onClick={() => setIsHeart1Clicked(!isHeart1Clicked)}
+                                        onClick={() => handleHeartClick(isHeart1Clicked, setIsHeart1Clicked)}
                                     >
                                         <img
                                             className={`w-8 h-8 transition-transform duration-200 transform ${isHeart1Clicked ? "scale-125" : ""}`}
@@ -190,12 +197,12 @@ function CottagePage() {
                                 </p>
                                 <p className="text-lg font-semibold mb-2">$199 per night</p>
                                 <div className="flex space-x-2">
-                                    <button className="bg-[#09B0EF] hover:bg-[#3ebae7] text-white px-4 py-2 rounded-md transition-colors font-semibold">
+                                    <button onClick={handleBook} className="bg-[#09B0EF] hover:bg-[#3ebae7] text-white px-4 py-2 rounded-md transition-colors font-semibold">
                                         Book
                                     </button>
                                     <button
                                         className="flex items-center justify-center rounded-lg bg-transparent p-0 relative focus:outline-none"
-                                        onClick={() => setIsHeart2Clicked(!isHeart2Clicked)}
+                                        onClick={() => handleHeartClick(isHeart2Clicked, setIsHeart2Clicked)}
                                     >
                                         <img
                                             className={`w-8 h-8 transition-transform duration-200 transform ${isHeart2Clicked ? "scale-125" : ""}`}
@@ -218,12 +225,12 @@ function CottagePage() {
                                 </p>
                                 <p className="text-lg font-semibold mb-2">$199 per night</p>
                                 <div className="flex space-x-2">
-                                    <button className="bg-[#09B0EF] hover:bg-[#3ebae7] text-white px-4 py-2 rounded-md transition-colors font-semibold">
+                                    <button onClick={handleBook} className="bg-[#09B0EF] hover:bg-[#3ebae7] text-white px-4 py-2 rounded-md transition-colors font-semibold">
                                         Book
                                     </button>
                                     <button
                                         className="flex items-center justify-center rounded-lg bg-transparent p-0 relative focus:outline-none"
-                                        onClick={() => setIsHeart3Clicked(!isHeart3Clicked)}
+                                        onClick={() => handleHeartClick(isHeart3Clicked, setIsHeart3Clicked)}
                                     >
                                         <img
                                             className={`w-8 h-8 transition-transform duration-200 transform ${isHeart3Clicked ? "scale-125" : ""}`}
@@ -234,6 +241,7 @@ function CottagePage() {
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>

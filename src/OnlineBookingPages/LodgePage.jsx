@@ -12,8 +12,7 @@ function LodgePage() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [tab, setTab] = useState('calendar');
     const [flexibleDays, setFlexibleDays] = useState('');
-    const [adults, setAdults] = useState(1);
-    const [children, setChildren] = useState(0);
+    const [persons, setPersons] = useState(1);
     const [selectedOption, setSelectedOption] = useState('');
     const [showGuestDropdown, setShowGuestDropdown] = useState(false);
     const [rooms, setRooms] = useState(1);
@@ -47,11 +46,8 @@ function LodgePage() {
                 setTab={setTab}
                 flexibleDays={flexibleDays}
                 setFlexibleDays={setFlexibleDays}
-                adults={adults}
-                setAdults={setAdults}
-                // eslint-disable-next-line react/no-children-prop
-                children={children}
-                setChildren={setChildren}
+                persons={persons}
+                setPersons={setPersons}
                 selectedOption={selectedOption}
                 setSelectedOption={setSelectedOption}
                 showGuestDropdown={showGuestDropdown}

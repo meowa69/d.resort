@@ -71,7 +71,6 @@ function Employee() {
 
     // Get the data and heading based on current view
     const tableData = currentView === 'cottage' ? cottagesData : lodgesData;
-    const heading = currentView === 'cottage' ? 'Cottage' : 'Lodge';
 
     useEffect(() => {
         const savedMenu = localStorage.getItem("activeMenu");
@@ -342,7 +341,7 @@ function Employee() {
 
                             <div className="flex-row w-full h-[615px] mt-8 p-6 mx-auto bg-white shadow-lg rounded-lg border-gray-200">
                                 <div className="flex justify-between mb-5">
-                                    <h1 className="text-2xl font-bold">{heading}</h1>
+                                    <h1 className="text-2xl font-bold">Booking Summary</h1>
                                     <div>
                                         <button
                                             onClick={() => switchView('cottage')}

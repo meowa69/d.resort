@@ -7,6 +7,7 @@ import CottageSlider from './OnlineBookingSlider/CottageSlider';
 import LodgeSlider from './OnlineBookingSlider/LodgeSlider';
 import ImgSlider from './OnlineBookingSlider/ImgSlider';
 import Loader from './components/Loader';
+import MapComponent from './components/Map';
 
 function Booking() {
     const navigate = useNavigate();
@@ -15,14 +16,13 @@ function Booking() {
     const [endDate, setEndDate] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showGuestDropdown, setShowGuestDropdown] = useState(false);
-    const [adults, setAdults] = useState(1);
-    const [children, setChildren] = useState(0);
+    const [persons, setPersons] = useState(0);
     const [numChildren, setNumChildren] = useState(0);
     const [rooms, setRooms] = useState(1);
     const [cottages, setCottages] = useState(1);
     const [flexibleDays, setFlexibleDays] = useState(null);
     const [selectedOption, setSelectedOption] = useState('');
-    const [tab, setTab] = useState('calendar'); // Default tab
+    const [tab, setTab] = useState('calendar'); 
     const datePickerRef = useRef(null);
     const guestDropdownRef = useRef(null);
 
@@ -76,12 +76,9 @@ function Booking() {
                 setShowDatePicker={setShowDatePicker}
                 flexibleDays={flexibleDays}
                 setFlexibleDays={setFlexibleDays}
-                adults={adults}
-                setAdults={setAdults}
+                persons={persons}
+                setPersons={setPersons}
                 numChildren={numChildren}
-                // eslint-disable-next-line react/no-children-prop
-                children={children}
-                setChildren={setChildren}
                 setNumChildren={setNumChildren}
                 selectedOption={selectedOption}
                 setSelectedOption={setSelectedOption}
@@ -120,18 +117,22 @@ function Booking() {
                 </div>
                 <div className="bg-white rounded-[20px] shadow-md p-4 flex items-center w-full max-w-[1200px] mx-auto mt-20">
                     <div className="w-1/3">
-                        <img src="./src/assets/sample6.jpg" alt="Resort" className="rounded-lg" />
+                        <div className="">
+                            <MapComponent />
+                        </div>
                     </div>
                     <div className="w-2/3 ml-10">
                         <h2 className="text-2xl font-bold mb-2">Enjoy your stay at our Resort</h2>
                         <p className="text-gray-600 mb-4">
                             Experience luxurious amenities and breathtaking views at our exclusive resort.
                         </p>
-                        <button href="#" className="bg-[#09B0EF] hover:bg-[#3ebae7] text-white px-4 py-2 rounded-md transition-colors font-semibold">
+                        <button href="#" className="bg-[#12B1D1] hover:bg-[#3ebae7] text-white px-4 py-2 rounded-md transition-colors font-semibold">
                             Learn More
                         </button>
                     </div>
-                </div> 
+                </div>
+
+                
             </div>
             <Footer />
         </div>
