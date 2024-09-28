@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Loader from '../components/Loader';
-
+import api from "../api";
 
 function RegisterForm() {
     const [loading, setLoading] = useState(true);
@@ -10,16 +10,23 @@ function RegisterForm() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
             alert("Passwords do not match!");
             return;
         }
-        // Handle registration logic here
-        console.log('Registering with:', { username, password });
-        // Navigate to the desired page after registration
-        navigate('/home'); // Change '/home' to your desired route
+
+        setLoading(true);
+        
+        try {
+            await api.post('api/user/register/', { username, password }); // Adjust this URL to match your backend route
+            navigate('/sign-in'); // Navigate to the sign-in page after registration
+        } catch (error) {
+            alert("Registration failed. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -36,9 +43,10 @@ function RegisterForm() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-white to-gray-100">
+            {/* Your existing code remains the same */}
             <div className="absolute top-4 left-4">
                 <button
-                    onClick={() => navigate(-1)} // Go back to the previous page
+                    onClick={() => navigate(-1)}
                     className="flex items-center text-blue-500 hover:underline transform transition hover:scale-105"
                 >
                     <img src="./src/assets/back.png" alt="Back" className="w-6 h-6 mr-2" />
