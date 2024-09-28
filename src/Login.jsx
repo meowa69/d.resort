@@ -23,9 +23,9 @@ function Login() {
   const handleLogin = (event) => {
     event.preventDefault();
     if (loginType === 'Admin') {
-      navigate('/Admin');
+      navigate('/AdminDash');
     } else if (loginType === 'Employee') {
-      navigate('/Employee');
+      navigate('/EmployeeDash');
     }
   };
 

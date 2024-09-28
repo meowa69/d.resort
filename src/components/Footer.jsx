@@ -1,5 +1,17 @@
 
+import { useNavigate } from 'react-router-dom';
+
+
 function Footer() {
+    const navigate = useNavigate();
+
+    const handleAboutUs = () => {
+        navigate('/about-us');
+    };
+
+    const handleTerms = () => {
+        navigate('/terms');
+    };
     return (
         <footer className="bg-gradient-to-r from-[#1089D3] to-[#12B1D1] mt-20">
                 <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
@@ -23,10 +35,10 @@ function Footer() {
                                 <h2 className="mb-4 text-sm font-bold text-gray-900 uppercase dark:text-white">Other information</h2>
                                 <ul className="text-white font-medium">
                                     <li className="mb-4">
-                                        <a href="#" className="hover:underline">About us</a>
+                                        <a href="#" className="hover:underline" onClick={handleAboutUs}>About us</a>
                                     </li>
                                     <li>
-                                        <a href="#" className="hover:underline">Terms &amp; Conditions</a>
+                                        <a href="#" className="hover:underline" onClick={handleTerms}>Terms &amp; Conditions</a>
                                     </li>
                                 </ul>
                             </div>

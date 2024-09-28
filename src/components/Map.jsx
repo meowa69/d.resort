@@ -1,9 +1,12 @@
+// src/components/MapComponent.js
+
 import { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import MapModal from '../Modal/MapModal';
+import PropTypes from 'prop-types'; // Import PropTypes
 
-const MapComponent = () => {
+const MapComponent = ({ showViewMapButton = true }) => {
   const mapRef = useRef(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -17,31 +20,34 @@ const MapComponent = () => {
     
     mapRef.current = { map, marker };
 
-    const customControl = L.control({ position: 'bottomleft' });
-    
-    customControl.onAdd = function () {
-      const div = L.DomUtil.create('div', 'custom-control');
-      const button = L.DomUtil.create('button', 'bg-[#12B1D1] hover:bg-[#3ebae7] text-white rounded-md p-2 shadow');
-      button.innerHTML = 'View Map';
+    // Add custom control if showViewMapButton is true
+    if (showViewMapButton) {
+      const customControl = L.control({ position: 'bottomleft' });
       
-      button.onclick = function () {
-        map.dragging.disable();
-        map.touchZoom.disable();
-        map.scrollWheelZoom.disable();
-        setModalOpen(true); 
+      customControl.onAdd = function () {
+        const div = L.DomUtil.create('div', 'custom-control');
+        const button = L.DomUtil.create('button', 'bg-[#12B1D1] hover:bg-[#3ebae7] text-white rounded-md p-2 shadow');
+        button.innerHTML = 'View Map';
+        
+        button.onclick = function () {
+          map.dragging.disable();
+          map.touchZoom.disable();
+          map.scrollWheelZoom.disable();
+          setModalOpen(true); 
+        };
+        
+        div.appendChild(button);
+        return div;
       };
       
-      div.appendChild(button);
-      return div;
-    };
-    
-    customControl.addTo(map); 
+      customControl.addTo(map);
+    }
 
     return () => {
       map.remove(); 
       mapRef.current = null;
     };
-  }, []);
+  }, [showViewMapButton]); // Add showViewMapButton to dependencies
 
   const closeModal = () => {
     if (mapRef.current) {
@@ -73,6 +79,10 @@ const MapComponent = () => {
       </MapModal>
     </div>
   );
+};
+
+MapComponent.propTypes = {
+  showViewMapButton: PropTypes.bool, // Define prop type
 };
 
 const LargeMap = () => {
