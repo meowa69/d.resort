@@ -784,7 +784,7 @@ function Admin() {
                                 className=""
                                 onClick={() => handleDownloadChoice('word')}
                             >
-                               <img src="./src/assets/word.png" className="fill-current w-8 h-8" />
+                            <img src="./src/assets/word.png" className="fill-current w-8 h-8" />
                             </button>
                         </div>
                         <button
