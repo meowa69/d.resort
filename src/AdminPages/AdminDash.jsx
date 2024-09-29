@@ -51,7 +51,7 @@ function AdminDash () {
     return (
         <div className="flex">
             <AdminSidebar />
-            <div id="dashboard" className="p-7 pl-10 flex-1 h-screen overflow-y-auto">
+            <div id="dashboard" className="p-6 pl-10 flex-1 h-screen overflow-y-auto">
                 <h1 className="text-4xl font-bold mb-4">DASHBOARD</h1>
                 <div className="flex justify-between">
                     <div className="flex-row w-full mr-5">
@@ -149,7 +149,6 @@ function AdminDash () {
                             </LocalizationProvider>
                         </div>
 
-                        
                         {/* Attendance Tracker */}
                         <div className="p-6 w-[500px] bg-white shadow-lg rounded-lg border-gray-200">
                             <div className="flex items-center mb-4 border-b pb-2 border-gray-200 justify-between">

@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Input from './components/Inputs';
-import CottageSlider from './OnlineBookingSlider/CottageSlider';
-import LodgeSlider from './OnlineBookingSlider/LodgeSlider';
-import ImgSlider from './OnlineBookingSlider/ImgSlider';
-import Loader from './components/Loader';
-import MapComponent from './components/Map';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import Input from '../components/Inputs';
+import CottageSlider from '../OnlineBookingSlider/CottageSlider';
+import LodgeSlider from '../OnlineBookingSlider/LodgeSlider';
+import ImgSlider from '../OnlineBookingSlider/ImgSlider';
+import Loader from '../components/Loader';
+import MapComponent from '../components/Map';
 
-function Booking() {
+function BookingMainPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [startDate, setStartDate] = useState(null);
@@ -51,6 +51,11 @@ function Booking() {
             alert('Please select an option');
         }
     };
+
+    const handleAboutUs = () => {
+        navigate('/about-us');
+    };
+
 
     useEffect(() => {
         // Simulate loading delay
@@ -126,7 +131,7 @@ function Booking() {
                         <p className="text-gray-600 mb-4">
                             Experience luxurious amenities and breathtaking views at our exclusive resort.
                         </p>
-                        <button href="#" className="bg-[#12B1D1] hover:bg-[#3ebae7] text-white px-4 py-2 rounded-md transition-colors font-semibold">
+                        <button href="#" className="bg-[#12B1D1] hover:bg-[#3ebae7] text-white px-4 py-2 rounded-md transition-colors font-semibold" onClick={handleAboutUs}>
                             Learn More
                         </button>
                     </div>
@@ -139,4 +144,4 @@ function Booking() {
     );
 }
 
-export default Booking;
+export default BookingMainPage;

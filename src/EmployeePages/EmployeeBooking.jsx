@@ -104,7 +104,7 @@ function EmployeeBooking () {
                 <h1 className="text-4xl font-bold mb-4">BOOKING</h1>
 
                 <div className="bg-white rounded-md w-full mt-5 relative">
-                    <div className="bg-white rounded-md shadow-lg p-6">
+                    <div className="bg-white rounded-md shadow-md p-6">
                         <div className="w-full flex justify-end mb-5">
                             <button
                                 onClick={() => setModalBookingOpen(true)}
