@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import ConfirmModal from './ConfirmModal';
 
 
 const BookingModal = ({ isOpen, onClose }) => {
@@ -9,18 +10,17 @@ const BookingModal = ({ isOpen, onClose }) => {
     const [bookingType, setBookingType] = useState('');
     const [checkInDate, setCheckInDate] = useState('');
     const [checkOutDate, setCheckOutDate] = useState('');
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
     const handleBookingSubmit = (e) => {
         e.preventDefault();
-        console.log("Booking submitted", {
-            customerName,
-            mobileNumber,
-            emailAddress,
-            bookingType,
-            checkInDate,
-            checkOutDate,
-        });
-        onClose(); 
+        // Open the confirm modal on form submit
+        setIsConfirmModalOpen(true);
+    };
+
+    const handleConfirmClose = () => {
+        setIsConfirmModalOpen(false);
+        onClose();
     };
 
     return (
@@ -31,7 +31,7 @@ const BookingModal = ({ isOpen, onClose }) => {
                         onClick={onClose}
                         className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
                     >
-                        &#10005; {/* Close icon */}
+                        &#10005;
                     </button>
 
                     <div className="flex justify-around mt-5">
@@ -58,7 +58,6 @@ const BookingModal = ({ isOpen, onClose }) => {
                                                 type="text"
                                                 placeholder="Enter customer name"
                                                 className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                                required
                                                 value={customerName}
                                                 onChange={(e) => setCustomerName(e.target.value)}
                                             />
@@ -70,7 +69,6 @@ const BookingModal = ({ isOpen, onClose }) => {
                                                 type="email"
                                                 placeholder="Email address"
                                                 className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                                required
                                                 value={emailAddress}
                                                 onChange={(e) => setEmailAddress(e.target.value)}
                                             />
@@ -82,7 +80,6 @@ const BookingModal = ({ isOpen, onClose }) => {
                                                 type="text"
                                                 placeholder="Enter mobile no."
                                                 className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                                required
                                                 value={mobileNumber}
                                                 onChange={(e) => setMobileNumber(e.target.value)}
                                             />
@@ -95,7 +92,6 @@ const BookingModal = ({ isOpen, onClose }) => {
                                             <input
                                                 type="date"
                                                 className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                                required
                                                 value={checkInDate}
                                                 onChange={(e) => setCheckInDate(e.target.value)}
                                             />
@@ -105,7 +101,6 @@ const BookingModal = ({ isOpen, onClose }) => {
                                             <input
                                                 type="date"
                                                 className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                                required
                                                 value={checkOutDate}
                                                 onChange={(e) => setCheckOutDate(e.target.value)}
                                             />
@@ -118,7 +113,6 @@ const BookingModal = ({ isOpen, onClose }) => {
                                         <label className="block text-gray-700 text-sm font-bold mb-2">Booking Type</label>
                                         <select
                                             className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            required
                                             value={bookingType}
                                             onChange={(e) => setBookingType(e.target.value)}
                                         >
@@ -213,6 +207,14 @@ const BookingModal = ({ isOpen, onClose }) => {
                                     >
                                         Confirm
                                     </button>
+
+                                    <ConfirmModal
+                                        isOpen={isConfirmModalOpen}
+                                        customerName={customerName}
+                                        checkInDate={checkInDate}
+                                        checkOutDate={checkOutDate}
+                                        onClose={handleConfirmClose}
+                                    />
 
                                     <button
                                         type="submit"

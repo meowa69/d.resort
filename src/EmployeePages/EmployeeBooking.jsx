@@ -109,8 +109,7 @@ function EmployeeBooking () {
                             <button
                                 onClick={() => setModalBookingOpen(true)}
                                 className="flex items-center gap-1 bg-[#12B1D1] hover:bg-[#09B0EF] px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer"
-                            >
-                                <i><img src="./src/assets/plus.png" className="fill-current w-4 h-4" style={{ filter: 'invert(100%)' }} /></i>Book
+                            >Book
                             </button>
 
                             <BookingModal isOpen={modalBookingOpen} onClose={() => setModalBookingOpen(false)} />

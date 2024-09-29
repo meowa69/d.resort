@@ -60,12 +60,12 @@ function AdminList () {
                                             <p className="text-gray-900 whitespace-no-wrap">09727892101</p>
                                         </td>
                                         <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                            <div className="flex space-x-4">
-                                                <button className="px-4 py-3 text-base font-medium rounded-md shadow-md text-white bg-[#70b8d3] hover:bg-[#09B0EF]">
-                                                    <img src="./src/assets/edit.png" className="fill-current w-4 h-4" style={{ filter: 'invert(100%)' }} />
+                                            <div className="flex space-x-1">
+                                                <button className="bg-[#1089D3] hover:bg-[#3d9fdb] p-3 rounded-full">
+                                                    <img src="./src/assets/edit.png" className="w-4 h-4 filter brightness-0 invert" alt="Edit" />
                                                 </button>
-                                                <button className="px-4 py-3 text-base font-medium rounded-md shadow-md text-white bg-[#ED6565] hover:bg-[#F24E4E]">
-                                                    <img src="./src/assets/delete.png" className="fill-current w-4 h-4" style={{ filter: 'invert(100%)' }} />
+                                                <button className="bg-[#FF6767] hover:bg-[#f35656] p-3 rounded-full">
+                                                    <img src="./src/assets/delete.png" className="w-4 h-4 filter brightness-0 invert" alt="Delete" />
                                                 </button>
                                             </div>
                                         </td>
