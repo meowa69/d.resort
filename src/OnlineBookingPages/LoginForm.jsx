@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Loader from '../components/Loader';
+import api from "../api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
 function LoginForm() {
     const [loading, setLoading] = useState(true);
@@ -16,12 +18,20 @@ function LoginForm() {
         return () => clearTimeout(timer);
     }, []);
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        // Handle login logic here
-        console.log('Logging in with:', { username, password });
-        // Navigate to the desired page after login
-        navigate('/home'); // Change '/home' to your desired route
+        setLoading(true);
+        
+        try {
+            const res = await api.post('/api/token/', { username, password }); // Adjust this URL to match your backend route
+            localStorage.setItem(ACCESS_TOKEN, res.data.access);
+            localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+            navigate('/home'); // Navigate to your desired route after login
+        } catch (error) {
+            alert("Login failed. Please check your credentials.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (loading) {
@@ -30,9 +40,10 @@ function LoginForm() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-white to-gray-100">
+            {/* Your existing code remains the same */}
             <div className="absolute top-4 left-4">
                 <button
-                    onClick={() => navigate(-1)} // Go back to the previous page
+                    onClick={() => navigate(-1)}
                     className="flex items-center text-blue-500 hover:underline transform transition hover:scale-105"
                 >
                     <img src="./src/assets/back.png" alt="Back" className="w-6 h-6 mr-2" />
@@ -43,11 +54,11 @@ function LoginForm() {
                 <h2 className="text-3xl font-black text-center text-blue-500 mb-6">Sign In</h2>
                 <form onSubmit={handleLogin} className="space-y-4">
                     <input
-                        type="email"
+                        type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         className="w-full px-4 py-3 bg-white border-none rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
-                        placeholder="E-mail"
+                        placeholder="Username"
                         required
                     />
                     <input
