@@ -26,7 +26,7 @@ function LoginForm() {
             const res = await api.post('/api/token/', { username, password }); // Adjust this URL to match your backend route
             localStorage.setItem(ACCESS_TOKEN, res.data.access);
             localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-            navigate('/home'); // Navigate to your desired route after login
+            navigate('/booking'); // Navigate to your desired route after login
         } catch (error) {
             alert("Login failed. Please check your credentials.");
         } finally {

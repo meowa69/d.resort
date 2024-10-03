@@ -25,7 +25,6 @@ function AdminSchedule () {
     });
 
     const rowsPerPage = 7;
-
     const startIndex = (currentPage - 1) * rowsPerPage;
     const endIndex = currentPage * rowsPerPage;
     const totalPages = Math.ceil(tableRows.length / rowsPerPage);
