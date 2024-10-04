@@ -1,7 +1,23 @@
+import { useState, useEffect } from 'react';
+import Loader from '../components/Loader';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-function AboutUsPage() {
+function TermsAndConditionPage() {
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        // Simulate loading delay
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 2000); 
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (loading) {
+        return <Loader />;
+    }
+
     return (
         <div className="min-h-screen flex flex-col bg-white">
             <Header />
@@ -27,4 +43,4 @@ function AboutUsPage() {
     );
 }
 
-export default AboutUsPage;
+export default TermsAndConditionPage;

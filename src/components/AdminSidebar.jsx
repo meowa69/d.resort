@@ -1,5 +1,5 @@
 import { useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function AdminSidebar() {
     const navigate = useNavigate();
@@ -46,14 +46,14 @@ function AdminSidebar() {
                         className={`cursor-pointer duration-500 w-20 ${!open && "rotate-[360deg]"}`}
                         alt="Logo"
                     />
-                    <h1 className={`text-white origin-left font-bold text-xl duration-300 ${!open && "scale-0"}`}>YASAY BEACH RESORT</h1>
+                    <h1 className={`text-white origin-left font-bold text-xl duration-300 ${!open && "scale-0"}`}>D.YASAY BEACH RESORT</h1>
                 </div>
                 
                 <ul className="flex flex-col pt-6 p-8 mt-3">
                     {Menus.map((menu, index) => (
                         <li key={index} className="mb-2">
-                            <a
-                                href={`#${menu.src}`}
+                            <Link
+                                to={`/${menu.src}`} // Use Link for navigation
                                 className={`menu-item ${activeMenu === menu.src ? "active" : "inactive"}`}
                                 onClick={() => handleMenuClick(menu.src)}
                             >
@@ -65,7 +65,7 @@ function AdminSidebar() {
                                     />
                                 </span>
                                 <span className={`text-md ml-1 font-semibold ${!open && "hidden"}`}>{menu.title}</span>
-                            </a>
+                            </Link>
                         </li>
                     ))}
 

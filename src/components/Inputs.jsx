@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import PropTypes from 'prop-types';
@@ -12,8 +11,6 @@ const Input = ({
     setShowDatePicker,
     tab,
     setTab,
-    flexibleDays,
-    setFlexibleDays,
     persons,
     setPersons,
     selectedOption,
@@ -28,7 +25,6 @@ const Input = ({
     datePickerRef,
     guestDropdownRef,
 }) => {
-    const [dateFlexibility, setDateFlexibility] = useState('Exact dates');
 
     const formatSelectedDates = (start, end) => {
         if (!start) return '';
@@ -42,36 +38,9 @@ const Input = ({
         setShowDatePicker(false);
     };
 
-    const handleFlexibilityChange = (flexibility) => {
-        setDateFlexibility(flexibility);
-        let newEndDate = endDate;
-        switch (flexibility) {
-            case '+ 1 day':
-                newEndDate = new Date(startDate);
-                newEndDate.setDate(startDate.getDate() + 1);
-                break;
-            case '+ 2 days':
-                newEndDate = new Date(startDate);
-                newEndDate.setDate(startDate.getDate() + 2);
-                break;
-            case '+ 3 days':
-                newEndDate = new Date(startDate);
-                newEndDate.setDate(startDate.getDate() + 3);
-                break;
-            case '+ 7 days':
-                newEndDate = new Date(startDate);
-                newEndDate.setDate(startDate.getDate() + 7);
-                break;
-            default:
-                // Exact dates, no change to endDate
-                break;
-        }
-        setEndDate(newEndDate);
-    };
-
     return (
-        <div className="mx-auto mt-8">
-            <div className="flex justify-center mt-4">
+        <div className="mx-auto">
+            <div className="flex justify-center">
                 <div className="mr-4">
                     <form onSubmit={(e) => e.preventDefault()}> {/* Prevent default form submission */}
                         <div className="relative">
@@ -113,12 +82,6 @@ const Input = ({
                                     >
                                         Calendar
                                     </button>
-                                    <button
-                                        onClick={() => setTab('flexible')}
-                                        className={`px-6 py-3 font-semibold ${tab === 'flexible' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
-                                    >
-                                        Flexible
-                                    </button>
                                 </div>
                                 {tab === 'calendar' ? (
                                     <div className="flex flex-col">
@@ -146,35 +109,11 @@ const Input = ({
                                                 inline
                                             />
                                         </div>
-
-                                        {/* Flexibility buttons */}
-                                        <div className="mt-4 flex justify-center gap-2">
-                                            {['Exact dates', '+ 1 day', '+ 2 days', '+ 3 days', '+ 7 days'].map((option) => (
-                                                <button
-                                                    key={option}
-                                                    onClick={() => handleFlexibilityChange(option)}
-                                                    className={`px-2 py-2 border border-gray-300 rounded-md font-semibold ${dateFlexibility === option ? 'bg-[#12B1D1] text-white' : 'text-gray-900'}`}
-                                                >
-                                                    {option}
-                                                </button>
-                                            ))}
-                                        </div>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col items-center">
-                                        <h2 className="text-lg font-bold mb-4">How long do you want to stay?</h2>
-                                        <div className="flex space-x-4">
-                                            {['1 night', '2-3 nights', '4-5 nights', '6-7 nights'].map((dayOption) => (
-                                                <button
-                                                    key={dayOption}
-                                                    onClick={() => setFlexibleDays(dayOption)}
-                                                    className={`px-4 py-2 border border-gray-300 rounded-md font-semibold ${flexibleDays === dayOption ? 'bg-[#12B1D1] text-white' : 'text-gray-900'}`}
-                                                >
-                                                    {dayOption}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
+                                    // Removed this section
+                                    null
+                                    // Removed this section
                                 )}
 
                                 <div className="mt-4 flex justify-end">
@@ -214,7 +153,7 @@ const Input = ({
                                             <button
                                                 type="button"
                                                 onClick={() => setPersons(persons + 1)}
-                                                className="px-2 py-1 bg-gray-200 rounded">+
+                                                className="px-2 py-1 bg-gray-200 rounded">+ 
                                             </button>
                                         </div>
                                     </div>
@@ -233,7 +172,7 @@ const Input = ({
                                                 <button
                                                     type="button"
                                                     onClick={() => setRooms(rooms + 1)}
-                                                    className="px-2 py-1 bg-gray-200 rounded">+
+                                                    className="px-2 py-1 bg-gray-200 rounded">+ 
                                                 </button>
                                             </div>
                                         </div>
@@ -252,7 +191,7 @@ const Input = ({
                                                 <button
                                                     type="button"
                                                     onClick={() => setCottages(cottages + 1)}
-                                                    className="px-2 py-1 bg-gray-200 rounded">+
+                                                    className="px-2 py-1 bg-gray-200 rounded">+ 
                                                 </button>
                                             </div>
                                         </div>
@@ -262,7 +201,6 @@ const Input = ({
                         )}
                     </div>
 
-                    {/* Search button */}
                     <div className="">
                         <button
                             type="button"
@@ -291,8 +229,6 @@ Input.propTypes = {
     setFlexibleDays: PropTypes.func.isRequired,
     persons: PropTypes.number.isRequired,
     setPersons: PropTypes.func.isRequired,
-    children: PropTypes.number.isRequired,
-    setChildren: PropTypes.func.isRequired,
     selectedOption: PropTypes.string.isRequired,
     setSelectedOption: PropTypes.func.isRequired,
     showGuestDropdown: PropTypes.bool.isRequired,

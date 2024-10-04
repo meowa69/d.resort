@@ -9,11 +9,7 @@ function CottagePage() {
     const navigate = useNavigate();
     
     // Simulate user authentication state (null means not logged in)
-    const [user] = useState(null); // Replace null with user object if logged in
     const [loading, setLoading] = useState(true);
-    const [isHeart1Clicked, setIsHeart1Clicked] = useState(false);
-    const [isHeart2Clicked, setIsHeart2Clicked] = useState(false);
-    const [isHeart3Clicked, setIsHeart3Clicked] = useState(false);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -39,16 +35,6 @@ function CottagePage() {
 
     const handleBook = () => {
         navigate('/payment');
-    };
-
-    const handleHeartClick = (isHeartClicked, setIsHeartClicked) => {
-        if (!user) {
-            // If user is not logged in, redirect to login page
-            navigate('/sign-in');
-        } else {
-            // If user is logged in, toggle the heart icon
-            setIsHeartClicked(!isHeartClicked);
-        }
     };
 
     return (
@@ -104,29 +90,7 @@ function CottagePage() {
                     {/* Sidebar for filters */}
                     <div className="w-1/4 p-4 bg-gray-100 rounded-lg shadow-md">
                         <h3 className="text-lg font-semibold mb-4">Filter by</h3>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 font-semibold mb-2">Search by property name</label>
-                            <input 
-                                type="text" 
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md" 
-                                placeholder="e.g. Marriott"
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <h4 className="font-semibold mb-2">Popular filters</h4>
-                            <div className="space-y-2">
-                                <label className="flex items-center">
-                                    <input type="checkbox" className="mr-2" />
-                                    Cottage
-                                </label>
-                                <label className="flex items-center">
-                                    <input type="checkbox" className="mr-2" />
-                                    Lodge
-                                </label>
-                            </div>
-                        </div>
-
+                       
                         <div className="mb-4">
                             <h4 className="font-semibold mb-2">Price Range</h4>
                             <div className="space-y-2">
@@ -172,16 +136,6 @@ function CottagePage() {
                                     <button onClick={handleBook} className="bg-[#09B0EF] hover:bg-[#3ebae7] text-white px-4 py-2 rounded-md transition-colors font-semibold">
                                         Book
                                     </button>
-                                    <button
-                                        className="flex items-center justify-center rounded-lg bg-transparent p-0 relative focus:outline-none"
-                                        onClick={() => handleHeartClick(isHeart1Clicked, setIsHeart1Clicked)}
-                                    >
-                                        <img
-                                            className={`w-8 h-8 transition-transform duration-200 transform ${isHeart1Clicked ? "scale-125" : ""}`}
-                                            src={isHeart1Clicked ? "./src/assets/heart-red.png" : "./src/assets/heart.png"}
-                                            alt="Heart"
-                                        />
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -200,16 +154,6 @@ function CottagePage() {
                                     <button onClick={handleBook} className="bg-[#09B0EF] hover:bg-[#3ebae7] text-white px-4 py-2 rounded-md transition-colors font-semibold">
                                         Book
                                     </button>
-                                    <button
-                                        className="flex items-center justify-center rounded-lg bg-transparent p-0 relative focus:outline-none"
-                                        onClick={() => handleHeartClick(isHeart2Clicked, setIsHeart2Clicked)}
-                                    >
-                                        <img
-                                            className={`w-8 h-8 transition-transform duration-200 transform ${isHeart2Clicked ? "scale-125" : ""}`}
-                                            src={isHeart2Clicked ? "./src/assets/heart-red.png" : "./src/assets/heart.png"}
-                                            alt="Heart"
-                                        />
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -227,16 +171,6 @@ function CottagePage() {
                                 <div className="flex space-x-2">
                                     <button onClick={handleBook} className="bg-[#09B0EF] hover:bg-[#3ebae7] text-white px-4 py-2 rounded-md transition-colors font-semibold">
                                         Book
-                                    </button>
-                                    <button
-                                        className="flex items-center justify-center rounded-lg bg-transparent p-0 relative focus:outline-none"
-                                        onClick={() => handleHeartClick(isHeart3Clicked, setIsHeart3Clicked)}
-                                    >
-                                        <img
-                                            className={`w-8 h-8 transition-transform duration-200 transform ${isHeart3Clicked ? "scale-125" : ""}`}
-                                            src={isHeart3Clicked ? "./src/assets/heart-red.png" : "./src/assets/heart.png"}
-                                            alt="Heart"
-                                        />
                                     </button>
                                 </div>
                             </div>

@@ -2,9 +2,11 @@ import { useState } from 'react';
 import BookingModal from '../Modal/BookingModal';
 import ViewModal from '../Modal/ViewModal';
 import Sidebar from '../components/EmployeeSidebar';
+import CalendarEventModal from '../Modal/CalendarEventModal';
 
 function EmployeeBooking () {
     const [modalBookingOpen, setModalBookingOpen] = useState(false);
+    const [modalCalendarEventOpen, setModalCalendarEventOpen] = useState(false);
     const [selectedType, setSelectedType] = useState(""); 
     const [selectedDateRange, setSelectedDateRange] = useState("Last 30 days"); 
     const [dropdownOpen, setDropdownOpen] = useState(false); 
@@ -17,16 +19,16 @@ function EmployeeBooking () {
 
      // sample
      const bookings = [
-        { id: 1, name: "Sablelo", type: 'Cottage', status: 'Pending', checkIn: '2024-10-01', checkOut: '2024-10-05' },
-        { id: 2, name: "Kenneth", type: 'Lodge', status: 'Booked', checkIn: '2024-10-10', checkOut: '2024-10-15' },
-        { id: 3, name: "Angelo", type: 'Cottage', status: 'Available', checkIn: '2024-10-01', checkOut: '2024-10-05' },
-        { id: 4, name: "Yasay", type: 'Lodge', status: 'Booked', checkIn: '2024-10-10', checkOut: '2024-10-15' },
-        { id: 5, name: "Flient", type: 'Cottage', status: 'Available', checkIn: '2024-10-01', checkOut: '2024-10-05' },
-        { id: 6, name: "Bacalso", type: 'Lodge', status: 'Pending', checkIn: '2024-10-10', checkOut: '2024-10-15' },
-        { id: 7, name: "Eman", type: 'Cottage', status: 'Available', checkIn: '2024-10-01', checkOut: '2024-10-05' },
-        { id: 8, name: "Daganato", type: 'Lodge', status: 'Available', checkIn: '2024-10-10', checkOut: '2024-10-15' },
-        { id: 9, name: "Martian", type: 'Cottage', status: 'Booked', checkIn: '2024-10-01', checkOut: '2024-10-05' },
-        { id: 10, name: "Pookie", type: 'Lodge', status: 'Pending', checkIn: '2024-10-10', checkOut: '2024-10-15' },
+        { id: 1, name: "Sablelo", type: 'Cottage', status: 'Pending', transaction: '2024-10-01', checkIn: '2024-10-01', checkOut: '2024-10-05', price: '300'},
+        { id: 2, name: "Kenneth", type: 'Lodge', status: 'Checked in', transaction: '2024-10-01', checkIn: '2024-10-10', checkOut: '2024-10-15', price: '300' },
+        { id: 3, name: "Angelo", type: 'Cottage', status: 'Checked out', transaction: '2024-10-01', checkIn: '2024-10-01', checkOut: '2024-10-05', price: '300' },
+        { id: 4, name: "Yasay", type: 'Lodge', status: 'Checked in', transaction: '2024-10-01', checkIn: '2024-10-10', checkOut: '2024-10-15', price: '300' },
+        { id: 5, name: "Flient", type: 'Cottage', status: 'Checked in', transaction: '2024-10-01', checkIn: '2024-10-01', checkOut: '2024-10-05', price: '300' },
+        { id: 6, name: "Bacalso", type: 'Lodge', status: 'Pending', transaction: '2024-10-01', checkIn: '2024-10-10', checkOut: '2024-10-15', price: '300' },
+        { id: 7, name: "Eman", type: 'Cottage', status: 'Checked out', transaction: '2024-10-01', checkIn: '2024-10-01', checkOut: '2024-10-05', price: '300' },
+        { id: 8, name: "Daganato", type: 'Lodge', status: 'Checked out', transaction: '2024-10-01', checkIn: '2024-10-10', checkOut: '2024-10-15', price: '300' },
+        { id: 9, name: "Martian", type: 'Cottage', status: 'Checked in', transaction: '2024-10-01', checkIn: '2024-10-01', checkOut: '2024-10-05', price: '300' },
+        { id: 10, name: "Pookie", type: 'Lodge', status: 'Pending', transaction: '2024-10-01', checkIn: '2024-10-10', checkOut: '2024-10-15', price: '300' },
     ];
     
 
@@ -56,7 +58,7 @@ function EmployeeBooking () {
                         comparison = a.status.localeCompare(b.status);
                         break;
                     case "Price":
-                        comparison = a.price - b.price; // Replace with actual property for price
+                        comparison = a.price - b.price; 
                         break;
                     default:
                         break;
@@ -70,10 +72,10 @@ function EmployeeBooking () {
     
     // Filter bookings based on selected type
     const filteredBookings = selectedType
-        ? bookings.filter(booking => booking.type === selectedType) // Filter bookings based on selected type
-        : bookings; // Show all bookings if no type is selected
-     // Example dummy booking data
-     const bookingData = {
+        ? bookings.filter(booking => booking.type === selectedType) 
+        : bookings; 
+
+        const bookingData = {
         image: "./src/assets/sample2.jpg",
         propertyName: "Luxury Villa",
         price: "$1500",
@@ -101,17 +103,25 @@ function EmployeeBooking () {
         <div className="flex">
             <Sidebar />
             <div id="dashboard" className="p-7 pl-10 flex-1 h-screen overflow-y-auto">
-                <h1 className="text-4xl font-bold mb-4">BOOKING</h1>
+                <h1 className="text-4xl font-bold mb-4">RESERVATION</h1>
 
                 <div className="bg-white rounded-md w-full mt-5 relative">
                     <div className="bg-white rounded-md shadow-md p-6">
-                        <div className="w-full flex justify-end mb-5">
+                        <h1 className="text-[25px] font-semibold mb-4 uppercase">Reservation List</h1>
+
+                        <div className="w-full flex justify-between mb-5">
+                            <button
+                                onClick={() => setModalCalendarEventOpen(true)}
+                                className="flex items-center gap-1 bg-[#12B1D1] hover:bg-[#09B0EF] px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer"
+                            >Calendar Events
+                            </button>
                             <button
                                 onClick={() => setModalBookingOpen(true)}
                                 className="flex items-center gap-1 bg-[#12B1D1] hover:bg-[#09B0EF] px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer"
                             >Book
                             </button>
-
+                            
+                            <CalendarEventModal isOpen={modalCalendarEventOpen} onClose={() => setModalCalendarEventOpen(false)} />
                             <BookingModal isOpen={modalBookingOpen} onClose={() => setModalBookingOpen(false)} />
                         </div>
                         
@@ -286,52 +296,35 @@ function EmployeeBooking () {
                             <table className="w-full text-sm text-left text-gray-500">
                                 <thead className="sticky top-0 text-xs text-gray-700 uppercase bg-gray-100 z-10">
                                     <tr>
-                                        <th scope="col" className="p-4">
-                                            <div className="flex items-center">
-                                                <input
-                                                    id="checkbox-all-search"
-                                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                                                />
-                                                <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
-                                            </div>
-                                        </th>
                                         <th scope="col" className="px-6 py-3">No.</th>
                                         <th scope="col" className="px-6 py-3">Name</th>
                                         <th scope="col" className="px-6 py-3">Type</th>
-                                        <th scope="col" className="px-6 py-3">Status</th>
+                                        <th scope="col" className="px-6 py-3">Transaction date</th>
                                         <th scope="col" className="px-6 py-3">Check In</th>
                                         <th scope="col" className="px-6 py-3">Check Out</th>
                                         <th scope="col" className="px-6 py-3">Price</th>
+                                        <th scope="col" className="px-6 py-3">Status</th>
                                         <th scope="col" className="px-6 py-3">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {sortBookings(filteredBookings).map((booking) => (
                                         <tr key={booking.id} className="border-b hover:bg-gray-50">
-                                            <td className="w-4 p-4">
-                                                <div className="flex items-center">
-                                                    <input
-                                                        id={`checkbox-table-search-${booking.id}`}
-                                                        type="checkbox"
-                                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                                                    />
-                                                    <label htmlFor={`checkbox-table-search-${booking.id}`} className="sr-only">checkbox</label>
-                                                </div>
-                                            </td>
                                             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{booking.id}</th>
                                             <td className="px-6 py-4">{booking.name}</td>
                                             <td className="px-6 py-4">{booking.type}</td>
+                                            <td className="px-6 py-4">{booking.transaction}</td>
+                                            <td className="px-6 py-4">{booking.checkIn}</td>
+                                            <td className="px-6 py-4">{booking.checkOut}</td>
+                                            <td className="px-6 py-4">{booking.price}</td>
                                             <td className="px-6 py-4">
-                                                <span className={`${booking.status === 'Available' ? 'bg-[#53db60]' : 
-                                                                booking.status === 'Booked' ? 'bg-[#FF6767]' : 
-                                                                booking.status === 'Pending' ? 'bg-[#FFC470]' : 
+                                                <span className={`${booking.status === 'Checked in' ? 'bg-[#51e633]' : 
+                                                                booking.status === 'Checked out' ? 'bg-[#FF6767]' :
+                                                                booking.status === 'Pending' ? 'bg-[#fdbc60]' :
                                                                 'bg-transparent'} px-2 py-2 rounded text-white`}>
                                                     {booking.status}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4">{booking.checkIn}</td>
-                                            <td className="px-6 py-4">{booking.checkOut}</td>
-                                            <td className="px-6 py-4">{booking.price}</td>
                                             <td className="px-6 py-4 space-x-2">
                                                 <button className="bg-[#1089D3] hover:bg-[#3d9fdb] p-2 rounded-full">
                                                     <img src="./src/assets/edit.png" className="w-4 h-4 filter brightness-0 invert" alt="Edit" />

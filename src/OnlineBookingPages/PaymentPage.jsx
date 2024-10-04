@@ -2,9 +2,10 @@ import PropTypes from 'prop-types'; // Import PropTypes
 import { useState, useEffect } from "react";
 import Loader from '../components/Loader';
 import { Link } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 
 function Payment({ startDate, endDate }) {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({
         firstName: '',
@@ -34,6 +35,10 @@ function Payment({ startDate, endDate }) {
         return date ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A';
     };
 
+    const handleConfirm = () => {
+        navigate('/billing');
+    };
+
     return (
         <div className="min-h-screen flex flex-col bg-white">
             <header className="bg-gradient-to-r from-[#1089D3] to-[#12B1D1] w-full h-full shadow-md">
@@ -50,7 +55,7 @@ function Payment({ startDate, endDate }) {
                 <div className="w-full max-w-[1200px] flex">
                     <div className="w-2/3 p-4">
                         <div className="border rounded-md p-4">
-                            <h2 className="text-2xl font-bold mb-4">Step 1: Personal Information</h2>
+                            <h2 className="text-2xl font-bold mb-4">Personal Information</h2>
                             <form className="space-y-4">
                                 {/* Existing form fields for personal information */}
                                 <div>
@@ -107,21 +112,6 @@ function Payment({ startDate, endDate }) {
                             </form>
                         </div>
 
-                        {/* Step 2: Payment Details */}
-                        <div className="p-4 border rounded-md mt-4">
-                            <h2 className="text-2xl font-bold mb-4">Step 2: Payment Details</h2>
-                            <h3 className="text-lg font-semibold">We only accept Gcash payment</h3>
-                            <label className="flex items-center mt-2">
-                                <input
-                                    type="checkbox"
-                                    className="mr-2"
-                                />
-                                <img src="./src/assets/gcash.png" alt=""  className="w-8 h-5 rounded-[3px]"/>
-                                <span className="text-sm ml-2">GCash</span>
-                            </label>
-                            
-                        </div>
-
                         {/* Cancellation Policy */}
                         <div className="mt-4 p-4 border rounded-md">
                             <h3 className="text-lg font-semibold">Cancellation Policy</h3>
@@ -132,12 +122,21 @@ function Payment({ startDate, endDate }) {
                         {/* Terms of Booking */}
                         <div className="mt-4 p-4 border rounded-md">
                             <h3 className="text-lg font-semibold">Terms of Booking</h3>
-                            <p className="text-sm">By proceeding with this booking, you agree to our terms and conditions.</p>
+                            <div className="flex items-center text-sm">
+                                <input
+                                    type="checkbox"
+                                    id="termsCheckbox"
+                                    className="mr-2"
+                                />
+                                <label htmlFor="termsCheckbox" className="cursor-pointer">
+                                    Agree to the <span className="text-[#7bbfff] font-semibold hover:underline">TERMS AND CONDITIONS</span> of this resort.
+                                </label>
+                            </div>
 
                             {/* Book Button */}
                             <div className="mt-6 flex justify-end">
-                                <button className="bg-[#1089D3] text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200">
-                                    Book Now
+                                <button onClick={handleConfirm} className="bg-[#12B1D1] text-white px-6 py-2 rounded-md hover:bg-[#3ebae7] transition duration-200">
+                                    Confirm
                                 </button>
                             </div>
                         </div>
@@ -154,12 +153,8 @@ function Payment({ startDate, endDate }) {
                                 
                                 {/* Main Details Block */}
                                 <div className="border p-4 rounded-md shadow-sm">
-                                    <h3 className="text-xl font-bold mb-2">Palms Cove Resort</h3>
-                                    <div className="flex items-center mb-2">
-                                        <span className="text-green-600 text-lg font-semibold">8.8</span>
-                                        <span className="text-sm text-gray-500 ml-2">Excellent</span>
-                                    </div>
-                                    <p className="text-sm text-gray-500">Hotels.com 54 guest reviews</p>
+                                    <h3 className="text-xl font-bold mb-2">Cottage A</h3>
+                                    <p className="text-sm text-gray-500">Good for 10 persons</p>
 
                                     {/* Check-in and Check-out details */}
                                     <div className="mt-4">

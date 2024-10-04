@@ -10,7 +10,7 @@ function EmployeeSidebar() {
     
     const Menus = [
         { title: "Dashboard", src: "EmployeeDash", path:"dashboard"},
-        { title: "Booking", src: "EmployeeBooking", path:"booking"},
+        { title: "Reservation", src: "EmployeeBooking", path:"booking"},
         { title: "Product", src: "EmployeeProduct", path:"product"},
         { title: "Sales Report", src: "EmployeeReport", path:"report"},
     ];
@@ -60,7 +60,7 @@ function EmployeeSidebar() {
                         alt="Logo"
                     />
                     <h1 className={`text-white origin-left font-bold text-xl duration-300 ${!open && "scale-0"}`}>
-                        YASAY BEACH RESORT
+                        D.YASAY BEACH RESORT
                     </h1>
                 </div>
 

@@ -16,6 +16,7 @@ import EmployeeBooking from './EmployeePages/EmployeeBooking.jsx';
 import EmployeeProduct from './EmployeePages/EmployeeProduct.jsx';
 import EmployeeReport from './EmployeePages/EmployeeReport.jsx';
 import BookingMainPage from './OnlineBookingPages/BookingMainPage.jsx';
+import BillingPage from './OnlineBookingPages/BillingPage.jsx';
 import Cottage from './OnlineBookingPages/CottagePage.jsx'
 import Lodge from './OnlineBookingPages/LodgePage.jsx'
 import SignIn from './OnlineBookingPages/LoginForm.jsx'
@@ -51,6 +52,7 @@ root.render(
         <Route path="/sign-in" element={<SignIn />}/>
         <Route path="/register" element={<Register />}/>
         <Route path="/payment" element={<Payment />}/>
+        <Route path="/billing" element={<BillingPage />}/>
         <Route path="/about-us" element={<About />}/>
         <Route path="/terms" element={<Terms />}/>
       </Routes>
