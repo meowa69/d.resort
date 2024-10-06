@@ -12,8 +12,9 @@ import AdminReport from './AdminPages/AdminReport.jsx';
 import AdminPayroll from './AdminPages/AdminPayroll.jsx';
 import EmployeeSidebar from './components/EmployeeSidebar.jsx';
 import EmployeeDash from './EmployeePages/EmployeeDash.jsx';
-import EmployeeBooking from './EmployeePages/EmployeeBooking.jsx';
-import EmployeeProduct from './EmployeePages/EmployeeProduct.jsx';
+import EmployeeReservation from './EmployeePages/EmployeeReservation.jsx';
+import ManageProduct from './EmployeePages/ManageProduct.jsx';
+import AddProduct from './EmployeePages/AddProduct.jsx';
 import EmployeeReport from './EmployeePages/EmployeeReport.jsx';
 import BookingMainPage from './OnlineBookingPages/BookingMainPage.jsx';
 import BillingPage from './OnlineBookingPages/BillingPage.jsx';
@@ -43,8 +44,9 @@ root.render(
         <Route path="/AdminPayroll" element={<AdminPayroll/>}/>
         <Route path="/employeeSidebar" element={<EmployeeSidebar />}/>
         <Route path="/EmployeeDash" element={<EmployeeDash />}/>
-        <Route path="/EmployeeBooking" element={<EmployeeBooking />}/>
-        <Route path="/EmployeeProduct" element={<EmployeeProduct />}/>
+        <Route path="/EmployeeReservation" element={<EmployeeReservation />}/>
+        <Route path="/ManageProduct" element={<ManageProduct />}/>
+        <Route path="/AddProduct" element={<AddProduct />}/>
         <Route path="/EmployeeReport" element={<EmployeeReport />}/>
         <Route path="/booking" element={<BookingMainPage />}/>
         <Route path="/cottage" element={<Cottage />}/>
