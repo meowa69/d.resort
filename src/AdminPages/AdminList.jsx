@@ -1,6 +1,25 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import AdminSidebar from '../components/AdminSidebar';
 
 function AdminList () {
+    //State to hold the list of employees
+    const [employees, setEmployees] = useState([]);
+
+    //Fetch employee data when the component mounts
+    useEffect(() => {
+        const fetchEmployees = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/employees/');
+                setEmployees(response.data); // Assuming this endpoint exists and returns employee data
+            } catch (error) {
+                console.error('Error fetching employees:', error);
+            }
+        };
+    
+        fetchEmployees();
+    }, []);
+
     return (
         <div className="flex">
             <AdminSidebar />
@@ -46,31 +65,32 @@ function AdminList () {
                                 </thead>
 
                                 <tbody>
-                                    <tr>
-                                        <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">Angelo Y. Yasay</p>
-                                        </td>
-                                        <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">293d1</p>
-                                        </td>
-                                        <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">Opol</p>
-                                        </td>
-                                        <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">09727892101</p>
-                                        </td>
-                                        <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
-                                            <div className="flex space-x-1">
-                                                <button className="bg-[#1089D3] hover:bg-[#3d9fdb] p-3 rounded-full">
-                                                    <img src="./src/assets/edit.png" className="w-4 h-4 filter brightness-0 invert" alt="Edit" />
-                                                </button>
-                                                <button className="bg-[#FF6767] hover:bg-[#f35656] p-3 rounded-full">
-                                                    <img src="./src/assets/delete.png" className="w-4 h-4 filter brightness-0 invert" alt="Delete" />
-                                                </button>
-                                            </div>
-                                        </td>
-
-                                    </tr>    
+                                    {employees.map((employee) => (
+                                        <tr key={employee.id}>
+                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                <p className="text-gray-900 whitespace-no-wrap">{employee.name}</p>
+                                            </td>
+                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                <p className="text-gray-900 whitespace-no-wrap"></p>
+                                            </td>
+                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                <p className="text-gray-900 whitespace-no-wrap">{employee.address}</p>
+                                            </td>
+                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                <p className="text-gray-900 whitespace-no-wrap"></p>
+                                            </td>
+                                            <td className="px-5 py-5 border-b border-r border-gray-200 bg-white text-sm">
+                                                <div className="flex space-x-1">
+                                                    <button className="bg-[#1089D3] hover:bg-[#3d9fdb] p-3 rounded-full">
+                                                        <img src="./src/assets/edit.png" className="w-4 h-4 filter brightness-0 invert" alt="Edit" />
+                                                    </button>
+                                                    <button className="bg-[#FF6767] hover:bg-[#f35656] p-3 rounded-full">
+                                                        <img src="./src/assets/delete.png" className="w-4 h-4 filter brightness-0 invert" alt="Delete" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
 

@@ -1,16 +1,18 @@
 import AdminSidebar from '../components/AdminSidebar';
-import { useState} from 'react';
+import { useState, useEffect} from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import TextField from '@mui/material/TextField';
 import { handleDownloadExcel, handleDownloadWord } from '../AdminUtils';
+import axios from 'axios';
 
 function AdminSchedule () {
     const [tableRows, setTableRows] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [employee, setEmployees] = useState([]);
     const [modalData, setModalData] = useState({
         name: '',
         schedule: {
@@ -23,6 +25,19 @@ function AdminSchedule () {
             sunday: { startTime: null, endTime: null, duty: '', dayOff: false },
         }
     });
+
+    useEffect(() => {
+        const fetchEmployees = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/employees/');
+                setEmployees(response.data);
+            } catch (error) {
+                console.error('Error fetching employees:', error);
+            }
+        };
+    
+        fetchEmployees();
+    }, []);
 
     const rowsPerPage = 7;
 
@@ -269,13 +284,19 @@ function AdminSchedule () {
                                 <form onSubmit={handleModalSubmit}>
                                     <div className="mb-3">
                                         <label className="block font-semibold text-lg mb-1">Name</label>
-                                        <input
-                                            type="text"
-                                            value={modalData.name}
-                                            onChange={(e) => setModalData({ ...modalData, name: e.target.value })}
-                                            className="border border-gray-300 p-2 w-full rounded"
-                                            required
-                                        />
+                                            <select
+                                                value={modalData.name}
+                                                onChange={(e) => setModalData({ ...modalData, name: e.target.value })}
+                                                className="border border-gray-300 p-2 w-full rounded"
+                                                required
+                                            >
+                                                <option value="">Select Employee</option>
+                                                {employee.map((emp) => (
+                                                    <option key={emp.id} value={emp.name}>
+                                                        {emp.name}
+                                                    </option>
+                                                ))}
+                                            </select>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from .models import Employee, Schedule
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -12,3 +13,22 @@ class UserSerializer(serializers.ModelSerializer):
         print(validated_data)
         user = User.objects.create_user(**validated_data)
         return user
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = ['name', 'address']
+        
+class ScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Schedule
+        fields = [
+            'employee',
+            'monday_start', 'monday_end', 'monday_duty', 'monday_day_off',
+            'tuesday_start', 'tuesday_end', 'tuesday_duty', 'tuesday_day_off',
+            'wednesday_start', 'wednesday_end', 'wednesday_duty', 'wednesday_day_off',
+            'thursday_start', 'thursday_end', 'thursday_duty', 'thursday_day_off',
+            'friday_start', 'friday_end', 'friday_duty', 'friday_day_off',
+            'saturday_start', 'saturday_end', 'saturday_duty', 'saturday_day_off',
+            'sunday_start', 'sunday_end', 'sunday_duty', 'sunday_day_off',
+        ]

@@ -66,7 +66,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -96,7 +97,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dresortdb',        # Replace with your database name
+        'NAME': 'dresort',        # Replace with your database name
         'USER': 'root',  # Replace with your MySQL username
         'PASSWORD': 'Nuffles012!@#',# Replace with your MySQL password
         'HOST': 'localhost',        # Or '127.0.0.1' if you're running MySQL on the same machine
