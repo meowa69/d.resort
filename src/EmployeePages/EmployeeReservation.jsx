@@ -4,7 +4,7 @@ import ViewModal from '../Modal/ViewModal';
 import Sidebar from '../components/EmployeeSidebar';
 import CalendarEventModal from '../Modal/CalendarEventModal';
 
-function EmployeeBooking () {
+function EmployeeReservation () {
     const [modalBookingOpen, setModalBookingOpen] = useState(false);
     const [modalCalendarEventOpen, setModalCalendarEventOpen] = useState(false);
     const [selectedType, setSelectedType] = useState(""); 
@@ -353,4 +353,4 @@ function EmployeeBooking () {
     );
 }
 
-export default EmployeeBooking;
+export default EmployeeReservation;

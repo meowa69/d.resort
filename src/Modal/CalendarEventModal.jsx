@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 const CalendarEventModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null; 
 
-    // Sample data for cottages and lodges
     const cottages = [
         { number: 1, type: 'Cottage A', },
         { number: 2, type: 'Cottage B', },
@@ -29,7 +28,6 @@ const CalendarEventModal = ({ isOpen, onClose }) => {
         { number: 8, type: 'Lodge B', },
         { number: 9, type: 'Lodge C', },
         { number: 10, type: 'Lodge C',},
-
     ];
 
     return (
@@ -147,8 +145,7 @@ const CalendarEventModal = ({ isOpen, onClose }) => {
                     >
                         Close
                     </button>
-                </div>
-                
+                </div> 
             </div>
         </div>
     );

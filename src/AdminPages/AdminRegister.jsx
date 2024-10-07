@@ -55,10 +55,6 @@ function AdminRegister () {
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="employeeId" className="block text-sm font-medium text-gray-700">Employee ID</label>
-                                    <input type="text" id="employeeId" name="employeeId" className="mt-1 p-2 w-full border border-black rounded bg-white" />
-                                </div>
-                                <div>
                                     <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
                                     <input
                                         type="text"
