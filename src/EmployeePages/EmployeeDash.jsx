@@ -14,33 +14,33 @@ function EmployeeDash () {
     };
 
     const cottagesData = [
-        { id: 1, image: "https://via.placeholder.com/64", type: "Cottage A", status: "Available" },
-        { id: 2, image: "https://via.placeholder.com/64", type: "Cottage B", status: "Booked" },
-        { id: 3, image: "https://via.placeholder.com/64", type: "Cottage C", status: "Available" },
-        { id: 4, image: "https://via.placeholder.com/64", type: "Cottage D", status: "Available" },
-        { id: 5, image: "https://via.placeholder.com/64", type: "Cottage A", status: "Available" },
-        { id: 6, image: "https://via.placeholder.com/64", type: "Cottage B", status: "Booked" },
-        { id: 7, image: "https://via.placeholder.com/64", type: "Cottage C", status: "Available" },
-        { id: 8, image: "https://via.placeholder.com/64", type: "Cottage D", status: "Available" },
-        { id: 9, image: "https://via.placeholder.com/64", type: "Cottage A", status: "Available" },
-        { id: 10, image: "https://via.placeholder.com/64", type: "Cottage B", status: "Booked" },
-        { id: 11, image: "https://via.placeholder.com/64", type: "Cottage C", status: "Available" },
-        { id: 12, image: "https://via.placeholder.com/64", type: "Cottage D", status: "Available" },
+        { id: 1, image: "https://via.placeholder.com/64", type: "Cottage A", date: "2024-10-22", status: "Available" },
+        { id: 2, image: "https://via.placeholder.com/64", type: "Cottage B", date: "2024-10-22", status: "Booked" },
+        { id: 3, image: "https://via.placeholder.com/64", type: "Cottage C", date: "2024-10-22", status: "Available" },
+        { id: 4, image: "https://via.placeholder.com/64", type: "Cottage D", date: "2024-10-22", status: "Available" },
+        { id: 5, image: "https://via.placeholder.com/64", type: "Cottage A", date: "2024-10-22", status: "Available" },
+        { id: 6, image: "https://via.placeholder.com/64", type: "Cottage B", date: "2024-10-22", status: "Booked" },
+        { id: 7, image: "https://via.placeholder.com/64", type: "Cottage C", date: "2024-10-22", status: "Available" },
+        { id: 8, image: "https://via.placeholder.com/64", type: "Cottage D", date: "2024-10-22", status: "Available" },
+        { id: 9, image: "https://via.placeholder.com/64", type: "Cottage A", date: "2024-10-22", status: "Available" },
+        { id: 10, image: "https://via.placeholder.com/64", type: "Cottage B", date: "2024-10-22", status: "Booked" },
+        { id: 11, image: "https://via.placeholder.com/64", type: "Cottage C", date: "2024-10-22", status: "Available" },
+        { id: 12, image: "https://via.placeholder.com/64", type: "Cottage D", date: "2024-10-22", status: "Available" },
     ];
 
     const lodgesData = [
-        { id: 1, image: "https://via.placeholder.com/64", type: "Lodge A", status: "Available" },
-        { id: 2, image: "https://via.placeholder.com/64", type: "Lodge B", status: "Booked" },
-        { id: 3, image: "https://via.placeholder.com/64", type: "Lodge C", status: "Available" },
-        { id: 4, image: "https://via.placeholder.com/64", type: "Lodge D", status: "Available" },
-        { id: 5, image: "https://via.placeholder.com/64", type: "Lodge A", status: "Available" },
-        { id: 6, image: "https://via.placeholder.com/64", type: "Lodge B", status: "Booked" },
-        { id: 7, image: "https://via.placeholder.com/64", type: "Lodge C", status: "Available" },
-        { id: 8, image: "https://via.placeholder.com/64", type: "Lodge D", status: "Available" },
-        { id: 9, image: "https://via.placeholder.com/64", type: "Lodge A", status: "Available" },
-        { id: 10, image: "https://via.placeholder.com/64", type: "Lodge B", status: "Booked" },
-        { id: 11, image: "https://via.placeholder.com/64", type: "Lodge C", status: "Available" },
-        { id: 12, image: "https://via.placeholder.com/64", type: "Lodge D", status: "Available" },
+        { id: 1, image: "https://via.placeholder.com/64", type: "Lodge A", date: "2024-10-22", status: "Available" },
+        { id: 2, image: "https://via.placeholder.com/64", type: "Lodge B", date: "2024-10-22", status: "Booked" },
+        { id: 3, image: "https://via.placeholder.com/64", type: "Lodge C", date: "2024-10-22", status: "Available" },
+        { id: 4, image: "https://via.placeholder.com/64", type: "Lodge D", date: "2024-10-22", status: "Available" },
+        { id: 5, image: "https://via.placeholder.com/64", type: "Lodge A", date: "2024-10-22", status: "Available" },
+        { id: 6, image: "https://via.placeholder.com/64", type: "Lodge B", date: "2024-10-22", status: "Booked" },
+        { id: 7, image: "https://via.placeholder.com/64", type: "Lodge C", date: "2024-10-22", status: "Available" },
+        { id: 8, image: "https://via.placeholder.com/64", type: "Lodge D", date: "2024-10-22", status: "Available" },
+        { id: 9, image: "https://via.placeholder.com/64", type: "Lodge A", date: "2024-10-22", status: "Available" },
+        { id: 10, image: "https://via.placeholder.com/64", type: "Lodge B", date: "2024-10-22", status: "Booked" },
+        { id: 11, image: "https://via.placeholder.com/64", type: "Lodge C", date: "2024-10-22", status: "Available" },
+        { id: 12, image: "https://via.placeholder.com/64", type: "Lodge D", date: "2024-10-22", status: "Available" },
     ];
     
     // Get the data and heading based on current view
@@ -124,6 +124,7 @@ function EmployeeDash () {
                                                 <tr className="text-center">
                                                     <th className="px-3 py-3 text-sm font-bold uppercase tracking-wider">#</th>
                                                     <th className="px-3 py-3 text-sm font-bold uppercase tracking-wider">Type</th>
+                                                    <th className="px-3 py-3 text-sm font-bold uppercase tracking-wider">Date</th>
                                                     <th className="px-3 py-3 text-sm font-bold uppercase tracking-wider">Status</th>
                                                 </tr>
                                             </thead>
@@ -141,6 +142,7 @@ function EmployeeDash () {
                                                                 {item.type}
                                                             </div>
                                                         </td>
+                                                        <td className="px-3 py-3 border-b bg-white text-sm">{item.date}</td>
                                                         <td className="px-3 py-3 border-b bg-white text-sm">{item.status}</td>
                                                     </tr>
                                                 ))}

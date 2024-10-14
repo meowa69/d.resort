@@ -1,42 +1,50 @@
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 const CalendarEventModal = ({ isOpen, onClose }) => {
+    // Always call hooks at the top level of the component
+    const navigate = useNavigate();
+
+    // Early return if modal is not open
     if (!isOpen) return null; 
 
     const cottages = [
-        { number: 1, type: 'Cottage A', },
-        { number: 2, type: 'Cottage B', },
-        { number: 3, type: 'Cottage C', },
-        { number: 4, type: 'Cottage A', },
-        { number: 5, type: 'Cottage B', },
-        { number: 6, type: 'Cottage C', },
-        { number: 7, type: 'Cottage A', },
-        { number: 8, type: 'Cottage B', },
-        { number: 9, type: 'Cottage C', },
-        { number: 10, type: 'Cottage C',},
-
+        { number: 1, type: 'Cottage A' },
+        { number: 2, type: 'Cottage B' },
+        { number: 3, type: 'Cottage C' },
+        { number: 4, type: 'Cottage A' },
+        { number: 5, type: 'Cottage B' },
+        { number: 6, type: 'Cottage C' },
+        { number: 7, type: 'Cottage A' },
+        { number: 8, type: 'Cottage B' },
+        { number: 9, type: 'Cottage C' },
+        { number: 10, type: 'Cottage C' },
     ];
 
     const lodges = [
-        { number: 1, type: 'Lodge A', },
-        { number: 2, type: 'Lodge B', },
-        { number: 3, type: 'Lodge C', },
-        { number: 4, type: 'Lodge A', },
-        { number: 5, type: 'Lodge B', },
-        { number: 6, type: 'Lodge C', },
-        { number: 7, type: 'Lodge A', },
-        { number: 8, type: 'Lodge B', },
-        { number: 9, type: 'Lodge C', },
-        { number: 10, type: 'Lodge C',},
+        { number: 1, type: 'Lodge A' },
+        { number: 2, type: 'Lodge B' },
+        { number: 3, type: 'Lodge C' },
+        { number: 4, type: 'Lodge A' },
+        { number: 5, type: 'Lodge B' },
+        { number: 6, type: 'Lodge C' },
+        { number: 7, type: 'Lodge A' },
+        { number: 8, type: 'Lodge B' },
+        { number: 9, type: 'Lodge C' },
+        { number: 10, type: 'Lodge C' },
     ];
+
+    const checkAvailability = (type) => {
+        navigate(`/calendar/${type}`); // Navigate to calendar page with type
+    };
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6  w-[90%]">
+            <div className="bg-white rounded-lg p-6 w-[90%]">
                 <h2 className="text-[25px] font-semibold mb-4">CALENDAR EVENTS</h2>
 
                 <div className="flex justify-between">
-                    <div className="w-1/2 mr-2 ">
+                    <div className="w-1/2 mr-2">
                         <div className="mb-2">
                             <h3 className="text-md font-semibold mb-2">Cottages</h3>
                             <div className="relative">
@@ -60,7 +68,7 @@ const CalendarEventModal = ({ isOpen, onClose }) => {
                             </div>
                         </div>
 
-                       <div className="w-full text-sm text-center text-gray-500">
+                        <div className="w-full text-sm text-center text-gray-500">
                             <table className="min-w-full border-collapse text-gray-700 uppercase bg-white">
                                 <thead className="sticky top-0 text-xs text-gray-700 uppercase bg-gray-100 z-10">
                                     <tr>
@@ -75,7 +83,9 @@ const CalendarEventModal = ({ isOpen, onClose }) => {
                                             <td className="border p-2 text-center">{cottage.number}</td>
                                             <td className="border p-2 text-center">{cottage.type}</td>
                                             <td className="border p-2 text-center">
-                                                <button className="bg-green-500 hover:bg-green-400 text-white px-3 py-1 rounded">
+                                                <button 
+                                                    onClick={() => checkAvailability(cottage.type)}
+                                                    className="bg-green-500 hover:bg-green-400 text-white px-3 py-1 rounded">
                                                     Check
                                                 </button>
                                             </td>
@@ -83,7 +93,7 @@ const CalendarEventModal = ({ isOpen, onClose }) => {
                                     ))}
                                 </tbody>
                             </table>
-                       </div> 
+                        </div> 
                     </div>
 
                     {/* Lodges Table */}
@@ -126,7 +136,9 @@ const CalendarEventModal = ({ isOpen, onClose }) => {
                                             <td className="border p-2 text-center">{lodge.number}</td>
                                             <td className="border p-2 text-center">{lodge.type}</td>
                                             <td className="border p-2 text-center">
-                                                <button className="bg-green-500 hover:bg-green-400 text-white px-3 py-1 rounded">
+                                                <button 
+                                                    onClick={() => checkAvailability(lodge.type)}
+                                                    className="bg-green-500 hover:bg-green-400 text-white px-3 py-1 rounded">
                                                     Check
                                                 </button>
                                             </td>
