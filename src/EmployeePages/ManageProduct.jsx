@@ -1,36 +1,53 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import Sidebar from '../components/EmployeeSidebar';
+import axios from 'axios';
 
-function ManageProduct({ products = [] }) { 
-    const [ setProducts ] = useState([]);
+function ManageProduct() {
+    const [products, setProducts] = useState([]);  
     const [editProductId, setEditProductId] = useState(null);
     const [editedProduct, setEditedProduct] = useState({});
+
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/products/');
+            setProducts(response.data); // Products from backend
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
 
     const handleEditClick = (product) => {
         setEditProductId(product.id);
         setEditedProduct({ ...product });
     };
 
-    const handleSaveClick = () => {
-        setProducts(products.map(product =>
-            product.id === editProductId ? editedProduct : product
-        ));
-        setEditProductId(null);
+    const handleSaveClick = async () => {
+        try {
+            await axios.put(`http://localhost:8000/api/products/${editProductId}/`, editedProduct);
+            setProducts(products.map(product =>
+                product.id === editProductId ? editedProduct : product
+            ));
+            setEditProductId(null);
+        } catch (error) {
+            console.error("Error updating product:", error);
+        }
     };
+    
 
-    const handleDeleteProduct = (id) => {
-        const filteredProducts = products.filter(product => product.id !== id);
-        setProducts(filteredProducts.map((product, index) => ({
-            ...product,
-            id: index + 1 // Re-sequence IDs after deletion
-        })));
+    const handleDeleteProduct = async (id) => {
+        console.log("Deleting product with ID:", id); // Add this to check the ID
+        try {
+            await axios.delete(`http://localhost:8000/api/products/${id}/`);
+            setProducts(products.filter(product => product.id !== id));
+        } catch (error) {
+            console.error("Error deleting product:", error);
+        }
     };
-
-    useEffect(() => {
-        // Log the updated products
-        console.log('Products updated:', products);
-    }, [products]);
 
     return (
         <div className="flex">
@@ -43,7 +60,7 @@ function ManageProduct({ products = [] }) {
                             <tr>
                                 <th scope="col" className="thDesign">ID</th>
                                 <th scope="col" className="thDesign">Product name</th>
-                                <th scope="col" className="thDesign">Date of Product added</th>
+                                <th scope="col" className="thDesign">Date of Product added</th> {/* Add date */}
                                 <th scope="col" className="thDesign">Quantity</th>
                                 <th scope="col" className="thDesign">AVG PRICE</th>
                                 <th scope="col" className="thDesign">ACTION</th>
@@ -55,10 +72,10 @@ function ManageProduct({ products = [] }) {
                                     <tr key={product.id} className="bg-white border-b hover:bg-gray-50">
                                         <td className="px-6 py-4">{product.id}</td>
                                         <td className="px-6 py-4 font-medium text-black whitespace-nowrap">{product.name}</td>
-                                        <td className="px-6 py-4">{product.dateAdded}</td>
+                                        <td className="px-6 py-4">{product.date_added}</td> {/* Render date */}
                                         <td className="px-6 py-4">{product.quantity}</td>
-                                        <td className="px-6 py-4">{product.avgPrice}</td>
-                                        <div className="space-x-2">
+                                        <td className="px-6 py-4">{product.avg_price}</td>
+                                        <td className="space-x-2">
                                             {editProductId === product.id ? (
                                                 <button
                                                     className="px-3 py-2 text-base font-medium rounded-md shadow-md text-white bg-[#1089D3] hover:bg-[#3d9fdb]"
@@ -90,7 +107,7 @@ function ManageProduct({ products = [] }) {
                                                     alt="Delete"
                                                 />
                                             </button>
-                                        </div>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
@@ -105,7 +122,6 @@ function ManageProduct({ products = [] }) {
         </div>
     );
 }
-
 // Define PropTypes for the component
 ManageProduct.propTypes = {
     products: PropTypes.arrayOf(

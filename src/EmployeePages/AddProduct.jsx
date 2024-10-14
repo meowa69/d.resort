@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Sidebar from '../components/EmployeeSidebar';
+import axios from 'axios';
 
 function AddProduct() {
     const [products, setProducts] = useState([]);
@@ -11,6 +12,10 @@ function AddProduct() {
     const [totalAmount, setTotalAmount] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [suggestions, setSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+
+
     const productsPerPage = 10;
 
     // Calculate indices for slicing the product array
@@ -109,6 +114,47 @@ function AddProduct() {
         setProducts([]); 
     };
 
+    const handleUpload = async () => {
+        const productsToUpload = products.map(product => ({
+            name: product.name,
+            quantity: product.quantity,
+            avgPrice: product.avgPrice
+        }));
+    
+        try {
+            const response = await axios.post('http://localhost:8000/api/uploadproducts/', {
+                products: productsToUpload
+            });
+    
+            if (response.status === 200) {
+                console.log('Products uploaded successfully');
+            }
+        } catch (error) {
+            console.error('Error uploading products', error);
+        }
+    };
+
+    // Handle product name change and trigger autocomplete
+    const handleProductNameChange = async (e) => {
+        const value = e.target.value;
+        setProductName(value);
+        if (value.length >= 2) {
+            try {
+                const response = await axios.get(`http://localhost:8000/api/product-autocomplete/?query=${value}`);
+                setSuggestions(response.data);  // Update suggestions state with the API response
+                setShowSuggestions(true);  // Show the suggestions dropdown
+            } catch (error) {
+                console.error('Error fetching product suggestions:', error);
+            }
+        } else {
+            setShowSuggestions(false);
+        }
+    };
+    
+    const handleSuggestionClick = (suggestion) => {
+        setProductName(suggestion.name);  // Set the clicked suggestion as the product name
+        setShowSuggestions(false);  // Hide the suggestions dropdown
+    };
 
     return (
         <div className="flex">
@@ -125,8 +171,24 @@ function AddProduct() {
                                         placeholder="Product Name"
                                         className="w-full p-2 border border-gray-300 rounded"
                                         value={productName}
-                                        onChange={(e) => setProductName(e.target.value)}
+                                        onChange={handleProductNameChange}
+                                        autoComplete="off"
                                     />
+
+                                    {showSuggestions && (
+                                            <ul className="suggestions-dropdown absolute z-10 bg-white border border-gray-300 w-full max-h-40 overflow-auto">
+                                                {suggestions.map((suggestion, index) => (
+                                                    <li
+                                                        key={index}
+                                                        onClick={() => handleSuggestionClick(suggestion)}
+                                                        className="p-2 cursor-pointer hover:bg-gray-200"
+                                                    >
+                                                        {suggestion.name}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+
                                 </div>
 
                                 <div className="flex justify-between space-x-2">
@@ -199,7 +261,7 @@ function AddProduct() {
                                 />
                             </div>
                             <div className="flex space-x-2">
-                                <button className="flex items-center gap-1 bg-[#70b8d3] hover:bg-[#09B0EF] px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">
+                                <button onClick={handleUpload} className="flex items-center gap-1 bg-[#70b8d3] hover:bg-[#09B0EF] px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">
                                     <i><img src="./src/assets/upload.png" className="fill-current w-4 h-4" style={{ filter: 'invert(100%)' }} /></i>Upload
                                 </button>
                                 <button onClick={handleClearProducts} className="flex items-center gap-1 bg-[#70b8d3] hover:bg-[#09B0EF] px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">

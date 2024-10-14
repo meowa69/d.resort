@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Employee, Schedule
+from .models import Employee, Schedule, Product
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -32,3 +32,13 @@ class ScheduleSerializer(serializers.ModelSerializer):
             'saturday_start', 'saturday_end', 'saturday_duty', 'saturday_day_off',
             'sunday_start', 'sunday_end', 'sunday_duty', 'sunday_day_off',
         ]
+
+class ProductSerializer(serializers.ModelSerializer):
+    date_added = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)  # Include this field
+    class Meta:
+        model = Product
+        fields = ['name', 'quantity', 'avgPrice', 'amount', 'date_added']
+        extra_kwargs = {
+            'amount':{'required': False}
+        }
+
