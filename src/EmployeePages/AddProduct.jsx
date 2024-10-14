@@ -176,18 +176,21 @@ function AddProduct() {
                                     />
 
                                     {showSuggestions && (
-                                            <ul className="suggestions-dropdown absolute z-10 bg-white border border-gray-300 w-full max-h-40 overflow-auto">
-                                                {suggestions.map((suggestion, index) => (
-                                                    <li
-                                                        key={index}
-                                                        onClick={() => handleSuggestionClick(suggestion)}
-                                                        className="p-2 cursor-pointer hover:bg-gray-200"
-                                                    >
-                                                        {suggestion.name}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
+                                                    <div className="absolute z-20 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow">
+                                                        <ul className="p-3 space-y-1 text-sm text-gray-700">
+                                                            {suggestions.map((suggestion, index) => (
+                                                                <li key={index}>
+                                                                    <div
+                                                                        className="flex items-center p-2 rounded hover:bg-gray-100 cursor-pointer"
+                                                                        onClick={() => handleSuggestionClick(suggestion)}
+                                                                    >
+                                                                        <span className="w-full ms-2 text-sm font-medium text-gray-900">{suggestion.name}</span>
+                                                                    </div>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                )}
 
                                 </div>
 
