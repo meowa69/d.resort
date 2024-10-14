@@ -25,6 +25,7 @@ import Register from './OnlineBookingPages/RegisterForm.jsx'
 import Payment from './OnlineBookingPages/PaymentPage.jsx'
 import About from './OnlineBookingPages/AboutUsPage.jsx'
 import Terms from './OnlineBookingPages/TermsAndConditionPage.jsx'
+import CalendarView from './EmployeePages/CalendarView.jsx';
 import './index.css';
 const root = createRoot(document.getElementById('root'));
 
@@ -57,6 +58,7 @@ root.render(
         <Route path="/billing" element={<BillingPage />}/>
         <Route path="/about-us" element={<About />}/>
         <Route path="/terms" element={<Terms />}/>
+        <Route path="/calendar/:type" element={<CalendarView />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
