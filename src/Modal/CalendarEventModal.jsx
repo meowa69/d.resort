@@ -32,7 +32,7 @@ const CalendarEventModal = ({ isOpen, onClose }) => {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6  w-[90%]">
+            <div className="bg-white rounded-lg p-6  w-[90%] h-[]">
                 <h2 className="text-[25px] font-semibold mb-4">CALENDAR EVENTS</h2>
 
                 <div className="flex justify-between">
